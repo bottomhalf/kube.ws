@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axilcorps-auth-pod
+  labels:
+    app: axilcorps-auth-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: axilcorps-auth-pod
+  template:
+    metadata:
+      labels:
+        app: axilcorps-auth-pod
+    spec:
+      containers:
+        - name: axilcorps-auth-pod
+          image: istiyaqmi9/axilcorps-authentication:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8180

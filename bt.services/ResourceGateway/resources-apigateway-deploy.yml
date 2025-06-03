@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resources-apigateway-pod
+  namespace: bt
+  labels:
+    app: resources-apigateway-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resources-apigateway-pod
+  template:
+    metadata:
+      labels:
+        app: resources-apigateway-pod
+    spec:
+      containers:
+        - name: resources-apigateway-pod
+          image: bottomhalflimited/bt.gtw.resources:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,14 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: authenticator-service
+  namespace: hb
+spec:
+  selector:
+    app: authenticator-hb-pod
+  ports:
+    - protocol: TCP
+      port: 8102
+      targetPort: 8102
+  type: LoadBalancer

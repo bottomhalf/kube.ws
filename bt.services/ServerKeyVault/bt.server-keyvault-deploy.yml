@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bt-server-keyvault-pod
+  namespace: bt
+  labels:
+    app: bt-server-keyvault-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bt-server-keyvault-pod
+  template:
+    metadata:
+      labels:
+        app: bt-server-keyvault-pod
+    spec:
+      containers:
+        - name: bt-server-keyvault-pod
+          image: bottomhalflimited/bt_server_keyvault_service:latest
+          ports:
+            - containerPort: 8080

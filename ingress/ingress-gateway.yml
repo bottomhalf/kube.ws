@@ -1,0 +1,185 @@
+# ingress route based access
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-gateway
+#   annotations:
+#     cert-manager.io/cluster-issuer: "lets-encrypt"
+#     kubernetes.io/ingress.class: public
+#     nginx.ingress.kubernetes.io/use-regix: "true"
+#     nginx.ingress.kubernetes.io/rewrite-target: /$2
+# spec:
+#   tls:
+#     - hosts:
+#       -  www.emstum.com
+#       secretName: bottomhalf-services-tls
+#   rules:
+#   - host: www.emstum.com
+#     http:
+#       paths:
+#       - path: /bot/sb(/|$)(.*)
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: ems-apigateway-service
+#             port:
+#               number: 8090
+#       - path: /bot/dn(/|$)(.*)
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: ems-apigateway-service
+#             port:
+#               number: 5001
+
+# ---  
+
+# ingress direct access use this for subdomain also
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-gateway-direct
+#   annotations:
+#     cert-manager.io/cluster-issuer: "lets-encrypt"
+#     # kubernetes.io/ingress.class: public
+#     # ingress.kubernetes.io/rewrite-target: /
+#     ingress.kubernetes.io/use-regex: "true"
+#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+#     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+# spec:
+#   ingressClassName: public
+#   tls:
+#     - hosts:      
+#       -  www.bottomhalf.in
+#       -  www.emstum.com
+#       -  www.axilcorps.com
+#       secretName: bottomhalf-tls
+#   rules:           
+#   - host: www.axilcorps.com
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: axilcorps-ui-service
+#             port:
+#               number: 6090
+#       - path: /api/
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: apigateway-axilcorps-service
+#             port:
+#               number: 6093  
+
+#   - host: www.bottomhalf.in
+#     http:
+#       paths:
+      
+      # - path: /dashboard/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: kubernetes-dashboard
+      #       port:
+      #         number: 31925      
+              
+      # - path: /
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: bottomhalf-service
+      #       port:
+      #         number: 8190
+
+      # - path: /bt/s1/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: resources-apigateway-service
+      #       port:
+      #         number: 8203              
+
+      # - path: /bt/s2/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: bt-server-keyvault-service
+      #       port:
+      #         number: 5013
+
+      # - path: /bt/s3
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: token-manager-service
+      #       port:
+      #         number: 8089   
+
+      # - path: /bt/s4/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: emailservice-service
+      #       port:
+      #         number: 8195  
+
+      # - path: /bts/resources/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: resources-apigateway-service
+      #       port:
+      #         number: 8203                    
+
+      # - path: /api/b_files/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: bs-multifilereader-service
+      #       port:
+      #         number: 5005   
+      # - path: /api/generate/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: bs-filegen-service
+      #       port:
+      #         number: 5004
+      # - path: /bts/resources/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: filemanager-service
+      #       port:
+      #         number: 5011                                        
+
+# ---  
+
+# # ingress direct access use this for subdomain also
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: ingress-gateway-site-only
+#   annotations:
+#     cert-manager.io/cluster-issuer: "lets-encrypt"
+#     kubernetes.io/ingress.class: public
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+#   tls:
+#     - hosts:
+#       -  www.emstum.com
+#       secretName: bottomhalf-tls
+#   rules:
+#   - host: www.emstum.com
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: emstum-ui-service
+#             port:
+#               number: 8081  

@@ -1,0 +1,22 @@
+# deployment for hirinb bell ui
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emstum-ui-pod
+  namespace: ems
+spec:
+  selector:
+    matchLabels:
+      app: emstum-ui-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: emstum-ui-pod
+    spec:
+      containers:
+      - name: emstum-ui-pod
+        image: bottomhalflimited/ems.app.web:emstum
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8090

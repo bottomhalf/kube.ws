@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leave-pod
+  namespace: ems
+  labels:
+    app: leave-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leave-pod
+  template:
+    metadata:
+      labels:
+        app: leave-pod
+    spec:
+      containers:
+        - name: leave-pod
+          image: bottomhalflimited/ems.svc.leave:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

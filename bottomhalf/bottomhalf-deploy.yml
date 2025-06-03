@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bottomhalf-pod
+  namespace: bt
+  labels:
+    app: bottomhalf-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bottomhalf-pod
+  template:
+    metadata:
+      labels:
+        app: bottomhalf-pod
+    spec:
+      containers:
+        - name: bottomhalf-pod
+          image: bottomhalflimited/bottomhalf:latest
+          imagePullPolicy: Always

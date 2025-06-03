@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bottomhalf-service
+  namespace: bt
+spec:
+  selector:
+    app: bottomhalf-pod
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 80
+  type: LoadBalancer

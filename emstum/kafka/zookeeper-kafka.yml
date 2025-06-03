@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper-deployment
+  namespace: kafka
+spec:
+  serviceName: zookeeper-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper-deployment
+  template:
+    metadata:
+      labels:
+        app: zookeeper-deployment
+    spec:
+      containers:
+      - name: zookeeper-service
+        image: digitalwonderland/zookeeper
+        ports:
+        - containerPort: 2181
+        env:
+        - name: ZOOKEEPER_ID
+          value: "1"
+        - name: ZOOKEEPER_SERVER_1
+          value: zookeeper-service
+      #   volumeMounts:
+      #     - name: efs-volume
+      #       mountPath: "/var/lib/zookeeper"
+      # volumes:
+      #     - name: efs-volume
+      #       hostPath:
+      #         path: /home/bot/ems/kafka-k8s/zookeeper
+
+--- 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service
+  namespace: kafka
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 2181
+    protocol: TCP
+    targetPort: 2181
+  selector:
+    app: zookeeper-deployment

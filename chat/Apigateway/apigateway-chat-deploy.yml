@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway-chat-pod
+  namespace: hb
+  labels:
+    app: apigateway-chat-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigateway-chat-pod
+  template:
+    metadata:
+      labels:
+        app: apigateway-chat-pod
+    spec:
+      containers:
+        - name: chat-gtw-tstream-pod
+          image: bottomhalflimited/apigateway-chat-service:latest
+          ports:
+            - containerPort: 8301

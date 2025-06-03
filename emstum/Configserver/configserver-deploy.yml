@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configserver-pod
+  namespace: ems
+  labels:
+    app: configserver-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: configserver-pod
+  template:
+    metadata:
+      labels:
+        app: configserver-pod
+    spec:
+      containers:
+        - name: configserver
+          image: istiyaqmi9/ems_configserver:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8083

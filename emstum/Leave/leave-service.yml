@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: leave-service
+  namespace: ems
+spec:
+  selector:
+    app: leave-pod
+  ports:
+    - protocol: TCP
+      port: 8213
+      targetPort: 8080
+  type: LoadBalancer

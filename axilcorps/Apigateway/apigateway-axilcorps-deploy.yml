@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway-axilcorps-pod
+  labels:
+    app: apigateway-axilcorps-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigateway-axilcorps-pod
+  template:
+    metadata:
+      labels:
+        app: apigateway-axilcorps-pod
+    spec:
+      containers:
+        - name: apigateway-axilcorps-pod
+          image: istiyaqmi9/axilcorps-apigateway:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8090

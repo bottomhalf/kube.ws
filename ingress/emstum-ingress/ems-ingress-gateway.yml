@@ -1,0 +1,66 @@
+# ingress direct access use this for subdomain also
+# port number range for emstum services start from 8201 - 8300
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: emstum-ingress
+  namespace: ems
+  annotations:
+    cert-manager.io/cluster-issuer: "lets-encrypt"
+    ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  ingressClassName: public
+  tls:
+    - hosts:      
+      -  www.emstum.in
+      -  www.emstum.com
+      secretName: emstum-tls
+  rules:           
+  - host: www.emstum.in
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ems-manage-org-ui-service
+            port:
+              number: 8209
+
+      - path: /api/
+        pathType: Prefix
+        backend:
+          service:
+            name: ems-manage-organization-service
+            port:
+              number: 8208
+
+  - host: www.emstum.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: emstum-ui-service
+            port:
+              number: 8203
+
+      # - path: /api/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: ems-apigateway-service
+      #       port:
+      #         number: 8090
+
+      - path: /api/
+        pathType: Prefix
+        backend:
+          service:
+            name: ems-apigateway-service
+            port:
+              number: 8201              

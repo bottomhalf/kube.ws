@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: token-manager-pod
+  namespace: bt
+  labels:
+    app: token-manager-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: token-manager-pod
+  template:
+    metadata:
+      labels:
+        app: token-manager-pod
+    spec:
+      containers:
+        - name: token-manager-pod
+          image: bottomhalflimited/bt.svc.tokenmanager:latest
+          ports:
+            - containerPort: 8080

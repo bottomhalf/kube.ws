@@ -1,0 +1,37 @@
+# deployment for skillbi ui
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillbi-pod
+spec:
+  selector:
+    matchLabels:
+      app: skillbi-ui
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: skillbi-ui
+    spec:
+      containers:
+      - name: skillbi-ui
+        image: istiyaqmi9/skillbi:latest
+        ports:
+        - containerPort: 80
+
+---
+
+# skillbi ui service with 3 set of replica
+apiVersion: v1
+kind: Service
+metadata:
+  name: skillbi-service
+spec:
+  selector:
+    app: skillbi-ui
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8201
+      targetPort: 80
+  type: LoadBalancer

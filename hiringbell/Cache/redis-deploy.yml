@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-pod
+  namespace: hb
+  labels:
+    app: redis-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-pod
+  template:
+    metadata:
+      labels:
+        app: redis-pod
+    spec:
+      containers:
+        - name: redis-pod
+          image: redis:latest
+          ports:
+            - containerPort: 8103
+          volumeMounts:
+            - mountPath: /data
+              name: redis-storage
+      volumes:
+        - name: redis-storage
+          emptyDir: {}

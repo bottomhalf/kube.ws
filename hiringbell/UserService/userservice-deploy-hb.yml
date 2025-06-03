@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice-hb-pod
+  namespace: hb
+  labels:
+    app: userservice-hb-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice-hb-pod
+  template:
+    metadata:
+      labels:
+        app: userservice-hb-pod
+    spec:
+      containers:
+        - name: userservice-hb-pod
+          image: bottomhalflimited/hb-svc-user:latest
+          ports:
+            - containerPort: 8105

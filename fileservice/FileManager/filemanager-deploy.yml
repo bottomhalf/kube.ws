@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filemanager-pod
+  labels:
+    app: filemanager-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filemanager-pod
+  template:
+    metadata:
+      labels:
+        app: filemanager-pod
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command: ['sh', '-c', 'chmod -R 777 /app/applications']
+        volumeMounts:
+        - name: document-volume
+          mountPath: /app/applications    
+      containers:
+        - name: filemanager-pod
+          image: istiyaqmi9/bt_file_manager:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /app/applications
+              name: document-volume
+      volumes:      
+        - name: document-volume
+          persistentVolumeClaim:
+            claimName: document-pvc            

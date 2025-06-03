@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evtracker-pod
+  labels:
+    app: evtracker-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evtracker-pod
+  template:
+    metadata:
+      labels:
+        app: evtracker-pod
+    spec:
+      containers:
+        - name: evtracker-pod
+          image: istiyaqmi9/bot-tracker
+          ports:
+            - containerPort: 8080

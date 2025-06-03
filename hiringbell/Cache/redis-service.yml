@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: hb
+  labels:
+    app: redis-service
+spec:
+  selector:
+    app: redis-pod
+  ports:
+    - protocol: TCP
+      port: 8103
+      targetPort: 8103
+  type: LoadBalancer

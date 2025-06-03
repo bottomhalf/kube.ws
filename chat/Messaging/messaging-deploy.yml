@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messaging-chat-pod
+  namespace: hb
+  labels:
+    app: messaging-chat-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messaging-chat-pod
+  template:
+    metadata:
+      labels:
+        app: messaging-chat-pod
+    spec:
+      containers:
+        - name: messaging-chat-pod
+          image: bottomhalflimited/messaging-chat-service:latest
+          ports:
+            - containerPort: 8302

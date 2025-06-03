@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-filter-pod
+  namespace: ems
+  labels:
+    app: employee-filter-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee-filter-pod
+  template:
+    metadata:
+      labels:
+        app: employee-filter-pod
+    spec:
+      containers:
+        - name: employee-filter
+          image: istiyaqmi9/ems_employeeperfilter:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8091

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authenticator-hb-pod
+  namespace: hb
+  labels:
+    app: authenticator-hb-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authenticator-hb-pod
+  template:
+    metadata:
+      labels:
+        app: authenticator-hb-pod
+    spec:
+      containers:
+        - name: authenticator-hb-pod
+          image: bottomhalflimited/hb-svc-auth:latest
+          ports:
+            - containerPort: 8102

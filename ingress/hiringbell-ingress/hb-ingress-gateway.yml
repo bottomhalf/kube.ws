@@ -1,0 +1,100 @@
+# ingress direct access use this for subdomain also
+# port number range for hiringbell services start from 9001
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hiringbell-ingress
+  namespace: hb
+  annotations:
+    cert-manager.io/cluster-issuer: "lets-encrypt"
+    # kubernetes.io/ingress.class: public
+    # ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+    # Websocket timeout setting
+    # nginx.ingress.kubernetes.io/proxy-read-timeout: "300"  # 5 min
+    # nginx.ingress.kubernetes.io/proxy-send-timeout: "300"  # 5 min
+    # nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"  # 5 min
+
+    # Disable websocket tracking completely by ingress
+    nginx.ingress.kubernetes.io/websocket-services: "messaging-chat-service.hb.svc.cluster.local"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    # nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    # nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/enable-websocket: "false"
+spec:
+  ingressClassName: public
+  tls:
+    - hosts:      
+      -  www.hiringbell.com
+      secretName: hiringbell-tls
+  rules:
+  - host: www.hiringbell.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webui-service
+            port:
+              number: 8105
+
+      - path: /hb/api/
+        pathType: Prefix
+        backend:
+          service:
+            name: apigateway-hiringbell-service
+            port:
+              number: 8101  
+
+      # - path: /hb/api/oauth/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: authenticator-service
+      #       port:
+      #         number: 9002 
+      # - path: /hb/api/auto/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: authenticator-service
+      #       port:
+      #         number: 9002               
+
+      # - path: /hb/api/core/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: coreservice-service
+      #       port:
+      #         number: 9003
+
+# routes for the chat stream
+      - path: /chat/api/
+        pathType: Prefix
+        backend:
+          service:
+            name: apigateway-chat-service
+            port:
+              number: 8301
+
+      # - path: /chat/api/messaging/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: messaging-chat-service
+      #       port:
+      #         number: 8101
+      # - path: /chat/api/session/
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: session-chat-service
+      #       port:
+      #         number: 8102                                                                                                                                 

@@ -1,0 +1,14 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: token-manager-service
+  namespace: bt
+spec:
+  selector:
+    app: token-manager-pod
+  ports:
+    - protocol: TCP
+      port: 8003
+      targetPort: 8080
+  type: LoadBalancer

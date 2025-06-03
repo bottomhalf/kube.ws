@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axilcorps-api-pod
+  labels:
+    app: axilcorps-api-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: axilcorps-api-pod
+  template:
+    metadata:
+      labels:
+        app: axilcorps-api-pod
+    spec:
+      containers:
+        - name: emaxilcorpsstum-api-pod
+          image: istiyaqmi9/axilcorps-core:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081

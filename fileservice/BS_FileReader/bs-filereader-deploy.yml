@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bs-multifilereader-pod
+  labels:
+    app: bs-multifilereader-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bs-multifilereader-pod
+  template:
+    metadata:
+      labels:
+        app: bs-multifilereader-pod
+    spec:
+      containers:
+        - name: bs-multifilereader-pod
+          image: istiyaqmi9/multi_file_reader:latest
+          ports:
+            - containerPort: 80

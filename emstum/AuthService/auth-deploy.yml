@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emstum-auth-pod
+  namespace: ems
+  labels:
+    app: emstum-auth-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emstum-auth-pod
+  template:
+    metadata:
+      labels:
+        app: emstum-auth-pod
+    spec:
+      containers:
+        - name: emstum-auth-pod
+          image: istiyaqmi9/ems_authservice:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

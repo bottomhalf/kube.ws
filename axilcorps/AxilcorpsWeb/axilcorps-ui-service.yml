@@ -1,0 +1,14 @@
+# emstum ui service with 3 set of replica
+apiVersion: v1
+kind: Service
+metadata:
+  name: axilcorps-ui-service
+spec:
+  selector:
+    app: axilcorps-ui-pod
+  ports:
+    - name: http
+      protocol: TCP
+      port: 6090
+      targetPort: 80
+  type: LoadBalancer

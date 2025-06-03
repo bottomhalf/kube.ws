@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bs-filegen-pod
+  labels:
+    app: bs-filegen-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bs-filegen-pod
+  template:
+    metadata:
+      labels:
+        app: bs-filegen-pod
+    spec:
+      containers:
+        - name: bs-filegen-pod
+          image: istiyaqmi9/bt_filegenerator:latest
+          ports:
+            - containerPort: 80

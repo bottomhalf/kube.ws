@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config-map
+  namespace: default
+data:
+  password: "live@Bottomhalf_001"

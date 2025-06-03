@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bt-filemanager-pod
+  namespace: bt
+  labels:
+    app: bt-filemanager-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bt-filemanager-pod
+  template:
+    metadata:
+      labels:
+        app: bt-filemanager-pod
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command: ['sh', '-c', 'chmod -R 777 /app/applications']
+        volumeMounts:
+        - name: files-volume
+          mountPath: /app/applications       
+      containers:
+        - name: bt-filemanager-pod
+          image: bottomhalflimited/bt.filemanagerservice:emstum
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /app/applications
+              name: files-volume
+      volumes:      
+        - name: files-volume
+          persistentVolumeClaim:
+            claimName: files-pvc             

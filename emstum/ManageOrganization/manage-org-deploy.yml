@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ems-manage-organization-pod
+  namespace: ems
+  labels:
+    app: ems-manage-organization-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ems-manage-organization-pod
+  template:
+    metadata:
+      labels:
+        app: ems-manage-organization-pod
+    spec:
+      containers:
+        - name: ems-manage-organization-pod
+          image: bottomhalflimited/ems-manage-organization:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80

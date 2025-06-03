@@ -1,0 +1,13 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: btchatstream-service
+spec:
+  selector:
+    app: btchatstream-pod
+  ports:
+    - protocol: TCP
+      port: 5010
+      targetPort: 5050
+  type: LoadBalancer

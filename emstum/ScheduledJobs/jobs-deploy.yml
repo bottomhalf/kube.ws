@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobs-pod
+  namespace: ems
+  labels:
+    app: jobs-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jobs-pod
+  template:
+    metadata:
+      labels:
+        app: jobs-pod
+    spec:
+      containers:
+        - name: jobsjob
+          image: bottomhalflimited/ems-jobs:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8085

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobs-service
+  namespace: ems
+spec:
+  selector:
+    app: jobs-pod
+  ports:
+    - protocol: TCP
+      port: 8213
+      targetPort: 8085
+  type: NodePort

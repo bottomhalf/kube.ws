@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        .gap {
+            margin-top: 20px
+        }
+
+        .box-cell {
+            padding-left: 15px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            /* border-bottom: 1px solid #d9d9d9; */
+        }
+
+        .box-cell-head {
+            padding-left: 15px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+        }
+
+        .box-bottom-cell {
+            padding-left: 15px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #222;
+        }
+
+        .text-muted {
+            color: #999797;
+            font-size: 10px;
+        }
+
+        .border-top {
+            border-top: 1px solid #222;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid #222;
+        }
+        .advance-disbursed-section {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #eaf7ff; /* Light blue background */
+            border: 1px solid #b3d7ff; /* Blue border */
+            border-radius: 4px;
+        }
+        .advance-disbursed-section .dt {
+            font-weight: bold;
+            color: #0056b3; /* Darker blue text */
+        }
+        .advance-disbursed-section .dd {
+            font-weight: bold;
+            color: #0056b3;
+            text-align: right;
+            width: 20vw;
+        }
+    </style>
+</head>
+
+<body style="width: 70vw; margin: auto;">
+    <div>
+        <div style="position: relative;">
+            <div style="font-size: 25px; color: rgb(27, 104, 134); text-align: center; font-weight: bold;">
+                [[CompanyName]]
+            </div>
+            <div style="font-size: 13px; color: rgb(27, 104, 134); text-align: center;">
+                [[CompanyFirstAddress]] [[CompanySecondAddress]] [[CompanyThirdAddress]] [[CompanyFourthAddress]]
+            </div>
+            <div style="font-size: 18px; color: rgb(27, 104, 134); text-align: center; font-weight: bold;">
+                Payslip for the month of [[Month]] [[Year]]
+            </div>
+            <div style="position: absolute; right: 0; top: 0;">
+                <div style="text-align: right;">
+                    <img style="width: 120px;" src="[[COMPANYLOGO_PATH]]" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="gap" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+            <tr>
+                <td class="box-cell-head" width="13%">
+                    <span style="font-size: 12px;">Emp No</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[EmployeeNo]]</span>
+                </td>
+                <td class="box-cell-head" width="14%">
+                    <span style="font-size: 12px;">Name</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[EmployeeName]]</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="box-cell-head" width="13%">
+                    <span style="font-size: 12px;">Department</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[Department]]</span>
+                </td>
+                <td class="box-cell-head" width="14%">
+                    <span style="font-size: 12px;">Designation</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[Designation]]</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="box-cell-head" width="13%">
+                    <span style="font-size: 12px;">Date Joined</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[JoiningDate]]</span>
+                </td>
+                <td class="box-cell-head" width="14%">
+                    <span style="font-size: 12px;">Payment Mode</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[Payment Mode]]</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="box-cell-head" width="13%">
+                    <span style="font-size: 12px;">Bank</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[Bank]]</span>
+                </td>
+                <td class="box-cell-head" width="14%">
+                    <span style="font-size: 12px;">Bank IFSC</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[BankIFSC]]</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="box-cell-head" width="13%">
+                    <span style="font-size: 12px;">Bank Account</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[Bank Account]]</span>
+                </td>
+                <td class="box-cell-head" width="14%">
+                    <span style="font-size: 12px;">PAN</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[PAN]]</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="box-cell-head" width="13%">
+                    <span style="font-size: 12px;">UAN</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[UAN]]</span>
+                </td>
+                <td class="box-cell-head" width="14%">
+                    <span style="font-size: 12px;">PF Number</span>
+                </td>
+                <td class="box-cell-head">
+                    <span style="font-size: 12px;">: [[PFNumber]]</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table style="margin-top: 10px;" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+            <tr>
+                <td class="box-cell-head border-top border-bottom">
+                    <span style="font-size: 12px;">Actual Payable Days : [[ActualPayableDays]]</span>
+                </td>
+                <td class="box-cell-head border-top border-bottom">
+                    <span style="font-size: 12px;">Total Working Days : [[TotalWorkingDays]]</span>
+                </td>
+                <td class="box-cell-head border-top border-bottom">
+                    <span style="font-size: 12px;">LOP : [[LossOfPayDays]]</span>
+                </td>
+                <td class="box-cell-head border-top border-bottom">
+                    <span style="font-size: 12px;">Days Payable : [[DaysPayable]]</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="padding-top:15px; font-size: 15px; font-weight: bold; padding-bottom: 5px; border-bottom: 1px solid #222; text-align: left;">
+        SALARY DETAILS
+    </div>
+    <div style="display: flex; justify-content:space-between; padding-top: 10px;">
+        <div style="width: 63%; padding-right: 10px; border-bottom: 1px solid #222;">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th style="padding-top:15px; padding-bottom: 10px; text-align: left; font-size:12px;">
+                            EARNINGS COMPONENTS
+                        </th>
+                        <th style="padding-top:15px; padding-bottom: 10px; text-align: right; font-size:12px;">
+                            ACTUAL
+                        </th>
+                        <th style="padding-top: 15px; padding-bottom: 10px; text-align: right; font-size: 12px;">
+                            EARNINGS
+                        </th>
+                        <th style="padding-top: 15px; padding-bottom: 10px; text-align: right; font-size: 12px;">
+                            YTD
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    [[CompleteSalaryDetails]]
+                    <tr>
+                        <td class="box-cell" style="border: 0; font-weight: bold; font-size: 12px;">Total Earnings (A) </td>
+                        <td class="box-cell" style="border: 0; font-size: 12px; text-align: right; font-weight: bold;">[[TotalActualEarnings]]</td>
+                        <td class="box-cell" style="border: 0; font-size: 12px; text-align: right; font-weight: bold;">[[TotalEarnings]]</td>
+                        <td class="box-cell" style="border: 0; font-size: 12px; text-align: right; font-weight: bold;">[[TotalYTD]]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="width: 33%; border-left: 1px solid #222; border-bottom: 1px solid #222; padding-left: 5px;">
+            <div colspan="4" style="padding-top: 15px; font-weight:bold; font-size: 12px; padding-bottom: 10px;">
+                CONTRIBUTIONS
+            </div>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    [[CompleteContributions]]
+                    <tr>
+                        <td class="box-cell" style="border: 0; font-size: 12px; font-weight: bold;">
+                            Total Contributions (B)
+                        </td>
+                        <td class="box-cell" style="border: 0; font-size: 12px; text-align: right;">
+                            [[TotalContribution]]
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div colspan="4" style="padding-top: 15px; font-weight: bold; font-size: 12px; padding-bottom: 10px;">
+                TAXES & DEDUCTIONS
+            </div>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tbody>
+                    [[TaxAndDeduction]]
+                    <tr>
+                        <td class="box-cell" style="border: 0; font-weight: bold; font-size: 12px;">
+                            Total Deductions (C)
+                        </td>
+                        <td class="box-cell" style="border: 0; text-align: right; font-size: 12px;">
+                            [[TotalDeduction]]
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    [[AdanceSalary]]
+    <table class="gap" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+            <tr>
+                <td class="box-cell" style="border: 0; font-size: 12px;">
+                    Net Salary Payable ( A - B - C )
+                </td>
+                <td class="box-cell" style="border: 0; font-size: 12px;">
+                    [[NetSalaryPayable]]
+                </td>
+            </tr>
+            [[TotalSalary]]
+            <tr>
+                <td class="box-cell" style="border: 0; font-size: 12px;">
+                    Salary in words
+                </td>
+                <td class="box-cell" style="border: 0; font-weight:bold; font-size: 12px;">
+                    [[NetSalaryInWords]]
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <span style="color: #222; font-size: 12px; font-weight: bold;">** Note :</span>
+                    <span style="color: #222; font-size: 12px; font-style: italic;"> All amounts displayed in this payslip are in </span>
+                    <span style="color: #222; font-size: 12px; font-weight: bold; font-style: italic;">INR</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    [[AdvanceSalaryDetail]]
+
+    <div style="text-align: center; padding-top: 20px">
+        <span style="color: #222; font-size: 12px; font-weight: bold;">*** This is a computer-generated statement and does not require a signature ***</span>
+    </div>
+</body>
+
+</html>

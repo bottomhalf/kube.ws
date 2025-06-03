@@ -1,0 +1,37 @@
+# create mysql deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-pod
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: mysql-pod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql-pod
+    spec:
+      containers:
+      - image: mysql:8.0
+        name: mysql-pod
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config-map
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mysql-pod
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc

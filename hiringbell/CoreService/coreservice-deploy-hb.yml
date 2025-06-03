@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coreservice-hb-pod
+  namespace: hb
+  labels:
+    app: coreservice-hb-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coreservice-hb-pod
+  template:
+    metadata:
+      labels:
+        app: coreservice-hb-pod
+    spec:
+      containers:
+        - name: coreservice-hb-pod
+          image: bottomhalflimited/hb-svc-core:latest
+          ports:
+            - containerPort: 8104
+      #     volumeMounts:
+      #       - mountPath: /app/resources
+      #         name: hiringbell-applicationfiles-volume
+      # volumes:        
+      #   - name: hiringbell-applicationfiles-volume
+      #     persistentVolumeClaim:
+      #       claimName: hiringbell-applicationfiles-pvc

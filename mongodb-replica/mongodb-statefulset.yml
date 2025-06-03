@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb-rep
+spec:
+  selector:
+    matchLabels:
+      app: mongodb-rep
+  serviceName: "mongodb-service-rep"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongodb-rep
+    spec:
+      containers:
+      - name: mongodb-rep
+        image: mongo:latest
+        command:
+          - mongod
+          - "--replSet"
+          - rs0
+          - "--smallfiles"
+          - "--noprealloc"
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodb-data-rep
+          mountPath: /data/db
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: "adminuser"
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: "password"
+  volumeClaimTemplates:
+    - metadata:
+        name: mongodb-data-rep
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

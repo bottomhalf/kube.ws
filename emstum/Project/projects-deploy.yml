@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: project-pod
+  namespace: ems
+  labels:
+    app: project-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: project-pod
+  template:
+    metadata:
+      labels:
+        app: project-pod
+    spec:
+      containers:
+        - name: employee-project
+          image: istiyaqmi9/ems_projects:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8085

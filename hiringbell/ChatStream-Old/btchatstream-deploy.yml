@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: btchatstream-pod
+  labels:
+    app: btchatstream-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: btchatstream-pod
+  template:
+    metadata:
+      labels:
+        app: btchatstream-pod
+    spec:
+      containers:
+        - name: btchatstream-pod
+          image: istiyaqmi9/chatstream:latest
+          ports:
+            - containerPort: 5050

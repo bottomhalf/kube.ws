@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salary-declaration-pod
+  namespace: ems
+  labels:
+    app: salary-declaration-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: salary-declaration-pod
+  template:
+    metadata:
+      labels:
+        app: salary-declaration-pod
+    spec:
+      containers:
+        - name: salary-declaration-pod
+          image: bottomhalflimited/ems.svc.payroll:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

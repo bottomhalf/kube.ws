@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway-hb-pod
+  namespace: hb
+  labels:
+    app: apigateway-hb-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigateway-hb-pod
+  template:
+    metadata:
+      labels:
+        app: apigateway-hb-pod
+    spec:
+      containers:
+        - name: apigateway-hb-pod
+          image: bottomhalflimited/hb-gtw-api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8101

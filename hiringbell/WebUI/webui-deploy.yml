@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webui-pod
+  namespace: hb
+  labels:
+    app: webui-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webui-pod
+  template:
+    metadata:
+      labels:
+        app: webui-pod
+    spec:
+      containers:
+        - name: webui-pod
+          image: istiyaqmi9/hb_open_jobs:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /app/etc/nginx/nginx.conf
+              name: nginx-config          
+      volumes:
+        - name: nginx-config
+          hostPath:
+            path: /root/kube.ws/Nginx-config

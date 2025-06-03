@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voltmate-site-pod
+  labels:
+    app: voltmate-site-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voltmate-site-pod
+  template:
+    metadata:
+      labels:
+        app: voltmate-site-pod
+    spec:
+      containers:
+        - name: voltmate-site-pod
+          image: istiyaqmi9/voltmate-site:latest
+          ports:
+            - containerPort: 80

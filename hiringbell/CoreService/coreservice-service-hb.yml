@@ -1,0 +1,14 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: coreservice-service
+  namespace: hb
+spec:
+  selector:
+    app: coreservice-hb-pod
+  ports:
+    - protocol: TCP
+      port: 8104
+      targetPort: 8104
+  type: LoadBalancer

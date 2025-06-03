@@ -1,0 +1,21 @@
+# deployment for hirinb bell ui
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axilcorps-ui-pod
+spec:
+  selector:
+    matchLabels:
+      app: axilcorps-ui-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: axilcorps-ui-pod
+    spec:
+      containers:
+      - name: axilcorps-ui-pod
+        image: istiyaqmi9/axilcorps-ui:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

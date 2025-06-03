@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-chat-pod
+  namespace: hb
+  labels:
+    app: session-chat-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: session-chat-pod
+  template:
+    metadata:
+      labels:
+        app: session-chat-pod
+    spec:
+      containers:
+        - name: session-chat-pod
+          image: bottomhalflimited/session-chat-service:latest
+          ports:
+            - containerPort: 8303
