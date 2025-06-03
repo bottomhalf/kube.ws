@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinkproject-pod
+  namespace: bt
+  labels:
+    app: pinkproject-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinkproject-pod
+  template:
+    metadata:
+      labels:
+        app: pinkproject-pod
+    spec:
+      containers:
+        - name: pinkproject-pod
+          image: bottomhalflimited/pink_project_site:latest
+          imagePullPolicy: Always
+      #     volumeMounts:
+      #       - mountPath: /usr/share/nginx/html/index.html
+      #         name: site-index-page
+      # volumes:
+      #   - name: site-index-page
+      #     hostPath:
+      #       path: /root/kube.ws/Lubna/pinkproject/index.html
