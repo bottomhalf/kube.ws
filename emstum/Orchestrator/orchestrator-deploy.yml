@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orchestrator-pod
+  namespace: ems
+  labels:
+    app: orchestrator-pod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: orchestrator-pod
+  template:
+    metadata:
+      labels:
+        app: orchestrator-pod
+    spec:
+      containers:
+        - name: orchestrator-pod
+          image: bottomhalflimited/ems.svc.orchestrator:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-pod
+  namespace: ems
+  labels:
+    app: core-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: core-pod
+  template:
+    metadata:
+      labels:
+        app: core-pod
+    spec:
+      containers:
+        - name: core-pod
+          image: bottomhalflimited/ems.svc.core:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+      #     volumeMounts:
+      #       - mountPath: /app/appsettings.json
+      #         name: appsetting-volume
+      #       # - mountPath: /app/exception_files
+      #       #   name: exception-file-volume
+      #       - mountPath: /app/applications
+      #         name: document-volume
+      # volumes:
+      #   - name: appsetting-volume
+      #     hostPath:
+      #       path: /root/kube.ws/emstum/Coreservice/appsettings.json
+      #   # - name: exception-file-volume
+      #   #   persistentVolumeClaim:
+      #   #     claimName: exception-files-pvc
+      #   - name: document-volume
+      #     persistentVolumeClaim:
+      #       claimName: document-pvc

@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ems-apigateway-service
+  name: apigateway-service
   namespace: ems
 spec:
   selector:
-    app: ems-apigateway-pod
+    app: apigateway-pod
   ports:
     - protocol: TCP
       port: 8201

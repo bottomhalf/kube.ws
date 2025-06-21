@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ems-apigateway-pod
+  name: apigateway-pod
   namespace: ems
   labels:
-    app: ems-apigateway-pod
+    app: apigateway-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ems-apigateway-pod
+      app: apigateway-pod
   template:
     metadata:
       labels:
-        app: ems-apigateway-pod
+        app: apigateway-pod
     spec:
       containers:
-        - name: ems-apigateway-pod
+        - name: apigateway-pod
           image: bottomhalflimited/ems.gtw.apigateway:emstum
           imagePullPolicy: Always
           ports:

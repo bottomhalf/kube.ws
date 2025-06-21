@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: salary-declaration-service
+  name: payroll-service
   namespace: ems
 spec:
   selector:
-    app: salary-declaration-pod
+    app: payroll-pod
   ports:
     - protocol: TCP
       port: 8212

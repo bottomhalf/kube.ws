@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filter-pod
+  namespace: ems
+  labels:
+    app: filter-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filter-pod
+  template:
+    metadata:
+      labels:
+        app: filter-pod
+    spec:
+      containers:
+        - name: filter
+          image: bottomhalflimited/ems-svc-filter:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8091

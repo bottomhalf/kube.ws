@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: performance-pod
+  namespace: ems
+  labels:
+    app: performance-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: performance-pod
+  template:
+    metadata:
+      labels:
+        app: performance-pod
+    spec:
+      containers:
+        - name: performance
+          image: bottomhalflimited/ems-svc-performance:emstum
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081

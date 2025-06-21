@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: employee-project
-          image: istiyaqmi9/ems_projects:emstum
+          image: bottomhalflimited/ems-svc-projects:emstum
           imagePullPolicy: Always
           ports:
             - containerPort: 8085

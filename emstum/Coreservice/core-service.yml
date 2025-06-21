@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-service
+  namespace: ems
+spec:
+  selector:
+    app: core-pod
+  ports:
+    - protocol: TCP
+      port: 8205
+      targetPort: 8080
+  type: LoadBalancer

@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: emstum-auth-service
+  name: auth-service
   namespace: ems
 spec:
   selector:
-    app: emstum-auth-pod
+    app: auth-pod
   ports:
     - protocol: TCP
       port: 8202

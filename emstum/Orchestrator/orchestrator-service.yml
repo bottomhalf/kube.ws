@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestrator-service
+  namespace: ems
+spec:
+  selector:
+    app: orchestrator-pod
+  ports:
+    - protocol: TCP
+      port: 8214
+      targetPort: 8080
+  type: LoadBalancer

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: filter-service
+  namespace: ems
+spec:
+  selector:
+    app: filter-pod
+  ports:
+    - protocol: TCP
+      port: 8207
+      targetPort: 8091
+  type: LoadBalancer
