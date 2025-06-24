@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ems-manage-organization-service
+  name: service-manager-service
   namespace: ems
 spec:
   selector:
-    app: ems-manage-organization-pod
+    app: service-manager-pod
   ports:
     - protocol: TCP
       port: 8208

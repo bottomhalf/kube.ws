@@ -25,6 +25,7 @@ spec:
       containers:
         - name: bt-filemanager-pod
           image: bottomhalflimited/bt.svc.filemanger:emstum
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           volumeMounts:

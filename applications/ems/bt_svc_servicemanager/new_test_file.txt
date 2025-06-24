@@ -1,0 +1,25 @@
+✅ Option 2: Use custom width with CSS (if exact fractions needed)
+If you need precise control like 12 / 8 = 1.5, use CSS flex and percentage widths:
+
+html
+Copy
+Edit
+<div class="row">
+  <div class="custom-col">1</div>
+  <div class="custom-col">2</div>
+  <div class="custom-col">3</div>
+  <div class="custom-col">4</div>
+  <div class="custom-col">5</div>
+  <div class="custom-col">6</div>
+  <div class="custom-col">7</div>
+  <div class="custom-col">8</div>
+</div>
+css
+Copy
+Edit
+.custom-col {
+  width: 12.5%; /* 100% / 8 */
+  float: left;
+  border: 1px solid #ccc; /* optional for visibility */
+  text-align: center;
+}

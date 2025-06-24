@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ems-manage-organization-pod
+  name: service-manager-pod
   namespace: ems
   labels:
-    app: ems-manage-organization-pod
+    app: service-manager-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ems-manage-organization-pod
+      app: service-manager-pod
   template:
     metadata:
       labels:
-        app: ems-manage-organization-pod
+        app: service-manager-pod
     spec:
       containers:
-        - name: ems-manage-organization-pod
+        - name: service-manager-pod
           image: bottomhalflimited/ems-manage-organization:latest
           imagePullPolicy: Always
           ports:
