@@ -26,7 +26,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: ems-manage-org-ui-service
+            name: manager-emstum-service
             port:
               number: 8209
 
@@ -34,7 +34,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: ems-manage-organization-service
+            name: service-manager-service
             port:
               number: 8208
 

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: filter-pod
-  namespace: ems
+  name: core-pod
+  namespace: kt
   labels:
-    app: filter-pod
+    app: core-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: filter-pod
+      app: core-pod
   template:
     metadata:
       labels:
-        app: filter-pod
+        app: core-pod
     spec:
       containers:
-        - name: filter
-          image: bottomhalflimited/ems-svc-filter:emstum-20250629125635
+        - name: core-pod
+          image: bottomhalflimited/kt-svc-coreservice:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8091
+            - containerPort: 8080

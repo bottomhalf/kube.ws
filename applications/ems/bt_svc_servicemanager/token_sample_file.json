@@ -1,0 +1,6 @@
+{
+  "Key": "$Key",
+  "Issuer": "$Issuer",
+  "CompanyCode": "$CompanyCode",
+  "ExpiryTimeInSeconds": "$ExpiryTimeInSeconds"
+}

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service-manager-pod
+  name: exit-pod
   namespace: ems
   labels:
-    app: service-manager-pod
+    app: exit-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: service-manager-pod
+      app: exit-pod
   template:
     metadata:
       labels:
-        app: service-manager-pod
+        app: exit-pod
     spec:
       containers:
-        - name: service-manager-pod
-          image: bottomhalflimited/bt-svc-manageremstum:latest
+        - name: exit
+          image: bottomhalflimited/ems-svc-exit:ems-exit-20250714073250
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080

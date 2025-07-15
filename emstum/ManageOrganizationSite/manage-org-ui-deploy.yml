@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ems-manage-org-ui-pod
+  name: manager-emstum-pod
   namespace: ems
   labels:
-    app: ems-manage-org-ui-pod
+    app: manager-emstum-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ems-manage-org-ui-pod
+      app: manager-emstum-pod
   template:
     metadata:
       labels:
-        app: ems-manage-org-ui-pod
+        app: manager-emstum-pod
     spec:
       containers:
-        - name: ems-manage-org-ui-pod
+        - name: manager-emstum-pod
           image: istiyaqmi9/ems_portal:latest
           imagePullPolicy: Always
           ports:
