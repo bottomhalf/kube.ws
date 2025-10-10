@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: exit-service
-  namespace: ems
+  name: iconicclub-service
+  namespace: bt
 spec:
   selector:
-    app: exit-pod
+    app: iconicclub-pod
   ports:
     - protocol: TCP
-      port: 8215
-      targetPort: 8092
+      port: 8008
+      targetPort: 80
   type: LoadBalancer

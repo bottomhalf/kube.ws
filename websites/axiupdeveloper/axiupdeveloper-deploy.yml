@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: axiupdeveloper-pod
+  namespace: bt
+  labels:
+    app: axiupdeveloper-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: axiupdeveloper-pod
+  template:
+    metadata:
+      labels:
+        app: axiupdeveloper-pod
+    spec:
+      containers:
+        - name: axiupdeveloper-pod
+          image: bottomhalflimited/axiupdeveloper:latest
+          imagePullPolicy: Always

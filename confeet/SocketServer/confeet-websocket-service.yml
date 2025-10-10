@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: confeet-websocket-service
+  namespace: cf
+spec:
+  selector:
+    app: confeet-websocket-pod
+  ports:
+    - protocol: TCP
+      port: 8402
+      targetPort: 8080
+  type: LoadBalancer

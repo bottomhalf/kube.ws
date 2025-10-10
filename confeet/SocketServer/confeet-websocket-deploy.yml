@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: confeet-websocket-pod
+  namespace: cf
+  labels:
+    app: confeet-websocket-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: confeet-websocket-pod
+  template:
+    metadata:
+      labels:
+        app: confeet-websocket-pod
+    spec:
+      containers:
+        - name: confeet-websocket-pod
+          image: bottomhalflimited/confeet:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

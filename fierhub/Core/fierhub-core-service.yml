@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fierhub-core-service
+  namespace: fb
+spec:
+  selector:
+    app: fierhub-core-pod
+  ports:
+    - protocol: TCP
+      port: 8501
+      targetPort: 80
+  type: LoadBalancer

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iconicclub-pod
+  namespace: bt
+  labels:
+    app: iconicclub-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iconicclub-pod
+  template:
+    metadata:
+      labels:
+        app: iconicclub-pod
+    spec:
+      containers:
+        - name: iconicclub-pod
+          image: bottomhalflimited/iconic_club_site:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 80

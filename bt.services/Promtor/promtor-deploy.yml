@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: exit-pod
-  namespace: ems
+  name: promtor-pod
+  namespace: bt
   labels:
-    app: exit-pod
+    app: promtor-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: exit-pod
+      app: promtor-pod
   template:
     metadata:
       labels:
-        app: exit-pod
+        app: promtor-pod
     spec:
       containers:
-        - name: exit
-          image: bottomhalflimited/ems-svc-exit:dev
+        - name: promtor-pod
+          image: bottomhalflimited/bt.svc.promtor:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8092
+            - containerPort: 80

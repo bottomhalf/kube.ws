@@ -15,27 +15,29 @@ spec:
   tls:
     - hosts:      
       -  www.bottomhalf.in
-      -  www.axilcorps.com
-      -  www.pinkproject.club
+      # -  www.axilcorps.com
+      # -  www.pinkproject.club
+      # -  www.axiupdeveloper.com
+      -  www.theiconicconnect.com
       secretName: bottomhalf-tls
   rules:           
-  - host: www.axilcorps.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: axilcorps-ui-service
-            port:
-              number: 6090
-      - path: /api/
-        pathType: Prefix
-        backend:
-          service:
-            name: apigateway-axilcorps-service
-            port:
-              number: 6093  
+  # - host: www.axilcorps.com
+  #   http:
+  #     paths:
+  #     - path: /
+  #       pathType: Prefix
+  #       backend:
+  #         service:
+  #           name: axilcorps-ui-service
+  #           port:
+  #             number: 6090
+  #     - path: /api/
+  #       pathType: Prefix
+  #       backend:
+  #         service:
+  #           name: apigateway-axilcorps-service
+  #           port:
+  #             number: 6093  
 
   - host: www.bottomhalf.in
     http:
@@ -79,7 +81,7 @@ spec:
           service:
             name: token-manager-service
             port:
-              number: 8003   
+              number: 8003 
 
       - path: /bt/s4/
         pathType: Prefix
@@ -89,6 +91,14 @@ spec:
             port:
               number: 8004  
 
+      - path: /bt/s5
+        pathType: Prefix
+        backend:
+          service:
+            name: promtor-service
+            port:
+              number: 8007              
+
       - path: /bts/resources/
         pathType: Prefix
         backend:
@@ -97,13 +107,35 @@ spec:
             port:
               number: 8005
 
-  - host: www.pinkproject.club
+  # - host: www.pinkproject.club
+  #   http:
+  #     paths:   
+  #     - path: /
+  #       pathType: Prefix
+  #       backend:
+  #         service:
+  #           name: pinkproject-service
+  #           port:
+  #             number: 8006  
+
+  - host: www.theiconicconnect.com
     http:
       paths:   
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: pinkproject-service
+            name: iconicclub-service
             port:
-              number: 8006
+              number: 8008
+
+  # - host: www.axiupdeveloper.com
+  #   http:
+  #     paths:   
+  #     - path: /
+  #       pathType: Prefix
+  #       backend:
+  #         service:
+  #           name: axiupdeveloper-service
+  #           port:
+  #             number: 8009                

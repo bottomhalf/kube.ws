@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fierhub-core-pod
+  namespace: fb
+  labels:
+    app: fierhub-core-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fierhub-core-pod
+  template:
+    metadata:
+      labels:
+        app: fierhub-core-pod
+    spec:
+      containers:
+        - name: fierhub-core-pod
+          image: bottomhalflimited/kt-svc-coreservice:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80

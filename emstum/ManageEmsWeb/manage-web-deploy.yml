@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: exit-pod
+  name: manager-emstum-pod
   namespace: ems
   labels:
-    app: exit-pod
+    app: manager-emstum-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: exit-pod
+      app: manager-emstum-pod
   template:
     metadata:
       labels:
-        app: exit-pod
+        app: manager-emstum-pod
     spec:
       containers:
-        - name: exit
-          image: bottomhalflimited/ems-svc-exit:dev
+        - name: manager-emstum-pod
+          image: bottomhalflimited/bt.web.emsmanager:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8092
+            - containerPort: 80

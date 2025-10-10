@@ -1,0 +1,22 @@
+# deployment for hirinb bell ui
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fierhub-pod
+  namespace: fb
+spec:
+  selector:
+    matchLabels:
+      app: fierhub-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fierhub-pod
+    spec:
+      containers:
+      - name: fierhub-pod
+        image: bottomhalflimited/kt.app.web:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

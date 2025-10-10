@@ -1,0 +1,358 @@
+drop table if exists payroll_period;
+
+create table payroll_period(
+	PayrollPeriodId bigint primary key auto_increment,
+    ForMonth int unique not null,
+    ForYear int unique not null,
+    StartDate datetime not null,
+    EndDate datetime not null,
+    PayDate datetime not null,
+    Status int not null,
+    LockStatus int not null,
+    CreatedBy bigint default 0,
+    CreatedOn datetime,
+    UpdatedBy bigint default 0,
+    UpdatedOn datetime
+);
+
+drop table if exists payroll_lock_history;
+
+create table payroll_lock_history(
+	PayrollLockHistoryId bigint primary key auto_increment,
+    PayPeriodId bigint not null,
+    Status int not null,
+    Reason text,
+    CreatedBy bigint not null,
+    CreatedOn datetime not null
+);
+
+DELIMITER $$
+
+drop procedure if exists sp_payroll_period_ins_upd $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_payroll_period_ins_upd`(
+	_PayrollPeriodId bigint,
+    _ForMonth int,
+    _ForYear int,
+    _StartDate datetime,
+    _EndDate datetime,
+    _PayDate datetime,
+    _Status int,
+    _LockStatus int,
+    _Reason text,
+    _Admin bigint,
+    out _ProcessingResult varchar(100)
+)
+Begin
+	Declare exit handler for sqlexception
+	Begin
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+		Set @Message = CONCAT('ERROR ', @errorno ,  ' (', @sqlstate, '): ', @errortext);
+		Call sp_LogException(@Message, '', 'sp_payroll_period_ins_upd', 1, 0, @Result);
+		Set _ProcessingResult = Concat(@Message, @Result);
+	end;
+    
+	set @payrollPeriodId = 0;
+    if not exists(select * from payroll_period where ForMonth = _ForMonth and ForYear = _ForYear) then
+		select ifnull(max(PayrollPeriodId), 0) + 1 into @payrollPeriodId from payroll_period;
+        
+        insert into payroll_period values(
+			@payrollPeriodId,
+            _ForMonth,
+            _ForYear,
+			_StartDate,
+			_EndDate,
+			_PayDate,
+			_Status,
+			_LockStatus,
+            _Admin,
+            utc_timestamp(),
+            0,
+            utc_timestamp()
+        );
+        
+        set _ProcessingResult = 'inserted';
+	else
+		select PayrollPeriodId into @payrollPeriodId from payroll_period where ForMonth = _ForMonth and ForYear = _ForYear;
+		update payroll_period set 
+			StartDate					=				_StartDate,
+			EndDate						=				_EndDate,
+			PayDate						=				_PayDate,
+			Status						=				_Status,
+			LockStatus					=				_LockStatus,
+			UpdatedBy					=				_Admin,
+			UpdatedOn					=				utc_timestamp()
+		where PayrollPeriodId = @payrollPeriodId;
+        
+        set _ProcessingResult = 'updated';
+	end if;
+    
+    set @payrollLockHistoryId = 0;
+    select ifnull(max(PayrollLockHistoryId), 0) + 1 into @payrollLockHistoryId from payroll_lock_history;
+    
+    insert into payroll_lock_history value(
+		@payrollLockHistoryId,
+		@payrollPeriodId,
+		_LockStatus,
+		_Reason,
+		_Admin,
+		utc_timestamp()
+    );
+end$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_payroll_period_get_by_id $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_payroll_period_get_by_id`(
+	_PayrollPeriodId bigint
+    
+    # call sp_payroll_period_get_by_id(1)
+)
+Begin
+	Declare exit handler for sqlexception
+	Begin
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+		Set @Message = CONCAT('ERROR ', @errorno ,  ' (', @sqlstate, '): ', @errortext);
+		Call sp_LogException(@Message, '', 'sp_payroll_period_get_by_id', 1, 0, @Result);
+	end;
+    
+	select * from payroll_period where PayrollPeriodId = _PayrollPeriodId;
+end$$
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+drop procedure if exists sp_payroll_monthly_detail_get_processed_data $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_payroll_monthly_detail_get_processed_data`(
+    _ForYear int,
+    _ForMonth int,
+    _CompanyId int
+    
+# call sp_payroll_monthly_detail_get_processed_data(2025, 4, 1)
+
+)
+Begin
+	Begin
+		Declare exit handler for sqlexception
+		Begin
+		
+			GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
+										@errorno = MYSQL_ERRNO,
+										@errortext = MESSAGE_TEXT;
+										
+			Set @Message = CONCAT('ERROR ', @errorno ,  ' (', @sqlstate, '): ', @errortext);
+			Call sp_LogException(@Message, '', 'sp_payroll_monthly_detail_get_processed_data', 1, 0, @Result);
+		End;
+        
+        if not exists(select * from salary_run_config_processing where ForYear = _ForYear and ForMonth = _ForMonth) then
+        begin
+			insert into salary_run_config_processing
+            value(
+				default,
+                _ForMonth,
+                _ForYear,
+                0,
+                _CompanyId
+            );
+        end;
+        end if;
+        
+        set @totalEmployees = 0;
+        select count(1) into @totalEmployees from employees
+        where IsActive = 1 and CompanyId = _CompanyId;
+        
+		set @processingStatus = 0;
+        select ProcessingStatus into @processingStatus from salary_run_config_processing
+        where ForYear = _ForYear 
+        and ForMonth = _ForMonth
+        and CompanyId = _CompanyId;
+        
+        set @state = '';
+        select State into @state from company where CompanyId = _CompanyId;
+		
+        if exists (select 1 from payroll_monthly_detail where ForYear = _ForYear 
+        and ForMonth = _ForMonth
+        and CompanyId = _CompanyId) then
+        begin
+			select 
+				count(1) EmployeeCount,
+				p.ForMonth,
+				p.ForYear,
+				sum(p.PayableToEmployee) TotalPayableToEmployees, 
+				sum(p.PFByEmployee) TotalPFByEmployee, 
+				sum(p.PFByEmployer) TotalPFByEmployer,
+				sum(p.TotalDeduction) TotalDeduction,
+				sum(p.ProfessionalTax) TotalProfessionalTax,
+                sum(p.ESIByEmployee) TotalESIByEmployee,
+                sum(p.ESIByEmployer) TotalESIByEmployer,
+                COUNT(CASE WHEN p.TotalDeduction > 0 THEN 1 END) AS TotalTDSEmployees,
+				COUNT(CASE WHEN p.ProfessionalTax > 0 THEN 1 END) AS TotalPTaxEmployees,
+                COUNT(CASE WHEN p.PayrollStatus = 17 THEN 1 END) AS TotalProcessed,
+                COUNT(CASE WHEN p.PayrollStatus = 19 THEN 1 END) AS TotalOnHold,
+				MAX(p.PayrollStatus) AS PayrollStatus,
+				Date(p.ExecutedOn) ProcessOn,
+				@totalEmployees TotalEmployees ,
+				@processingStatus ProcessingStatus,
+                @state as State,
+                ifnull(pp.LockStatus, 0) as LockStatus
+			from 
+				payroll_monthly_detail p
+                left join payroll_period pp on pp.ForMonth = p.ForMonth and pp.ForYear = p.ForYear
+			where 
+				p.ForYear = _ForYear 
+				and p.ForMonth = _ForMonth
+				and p.CompanyId = _CompanyId
+			group by 
+				# PayrollStatus, 
+                p.ForMonth, p.ForYear, Date(p.ExecutedOn);
+        end;
+        else
+        begin
+			select 
+				0 as EmployeeCount,
+				_ForMonth as ForMonth,
+				_ForYear ForYear,
+				0 as TotalPayableToEmployees,
+				0 as TotalPFByEmployee,
+				0 as TotalPFByEmployer,
+				0 as TotalDeduction,
+				0 as TotalProfessionalTax,
+                0 as TotalESIByEmployee,
+                0 as TotalESIByEmployer,
+				0 as TotalTDSEmployees,
+                0 as TotalPTaxEmployees,
+				0 as PayrollStatus,
+				0 AS TotalProcessed,
+                0 AS TotalOnHold,
+				null as ProcessOn,
+				@totalEmployees as TotalEmployees, 
+				@processingStatus as ProcessingStatus,
+                @state as State,
+                0 as LockStatus;
+        end;
+        end if;
+	End;
+end$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_payroll_period_get_by_id $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_payroll_period_get_by_distinct_key`(
+	_DistinctMonthYearKeys varchar(500)
+    
+    # call sp_payroll_period_get_by_distinct_key('202504')
+)
+Begin
+	Declare exit handler for sqlexception
+	Begin
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+		Set @Message = CONCAT('ERROR ', @errorno ,  ' (', @sqlstate, '): ', @errortext);
+		Call sp_LogException(@Message, '', 'sp_payroll_period_get_by_distinct_key', 1, 0, @Result);
+	end;
+    
+	select * from payroll_period where (ForYear * 100 + ForMonth) in (_DistinctMonthYearKeys);
+end$$
+DELIMITER ;
+
+
+
+
+DELIMITER $$
+
+drop procedure if exists sp_additional_allowance_get_by_id $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_additional_allowance_get_by_id`(
+	_AdditionalAllowanceId bigint
+/*
+
+	call sp_additional_allowance_get_by_id(1)
+
+*/
+)
+Begin
+	Declare Exit handler for sqlexception
+	Begin
+		Get Diagnostics condition 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+									
+		Set @Message = concat ('ERROR ', @errorno ,  ' (', @sqlstate, '); ', @errortext);
+		Call sp_LogException (@Message, '', 'sp_additional_allowance_by_id', 1, 0, @Result);
+	end;
+
+	Begin
+		select a.*, p.LockStatus from additional_allowance a
+        left join payroll_period p  on p.ForMonth = a.Month and p.ForYear = a.Year
+        where AdditionalAllowanceId = _AdditionalAllowanceId;
+	end;
+End$$
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+drop procedure if exists sp_additional_allowance_filter $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_additional_allowance_filter`(
+	_SearchString varchar(250),
+	_SortBy varchar(50),
+	_PageIndex int,
+	_PageSize int
+/*
+
+	call sp_additional_allowance_filter('1=1 and a.Status = 9', null, 1, 10)
+
+*/
+)
+Begin
+	Declare Exit handler for sqlexception
+	Begin
+		Get Diagnostics condition 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+									
+		Set @Message = concat ('ERROR ', @errorno ,  ' (', @sqlstate, '); ', @errortext);
+		Call sp_LogException (@Message, '', 'sp_additional_allowance_filter', 1, 0, @Result);
+	end;
+
+	Begin
+			If(_SortBy is NULL OR _SortBy = '') then
+            begin
+				Set _SortBy = ' CreatedOn DESC';
+			end;
+			End if;
+
+			Set @SelectQuery = CONCAT('Select * from (
+				Select 
+					Row_Number() over(Order by ', _SortBy, ') as RowIndex,
+					a.*,
+                    Concat(e.FirstName, '' '', e.LastName) Name,
+                    p.LockStatus,
+					Count(1) Over() as Total
+				from additional_allowance a
+                left join employees e on e.EmployeeUid = a.EmployeeId
+                left join payroll_period p on p.ForMonth = a.Month and p.ForYear = a.Year
+				where ', _SearchString, '
+			)T where RowIndex between ', (_PageIndex - 1) * _PageSize + 1 ,' and ', (_PageIndex * _PageSize)) ;
+            
+			prepare SelectQuery from @SelectQuery;
+			execute SelectQuery;	
+	end;
+End$$
+DELIMITER ;

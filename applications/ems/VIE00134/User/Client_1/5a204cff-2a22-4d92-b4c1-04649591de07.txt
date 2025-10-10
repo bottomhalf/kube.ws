@@ -1,0 +1,1354 @@
+alter table project
+drop column ProjectManagerId,
+drop column DocumentPath,
+drop column PageIndexDetail,
+drop column KeywordDetail,
+drop column DocumentationDetail,
+drop column CompanyId,
+drop column CEOId,
+drop column CanCEOAccess,
+drop column CTOId,
+drop column CanCTOAccess,
+drop column CFOId,
+drop column CanCFOAccess,
+drop column COOId,
+drop column CanCOOAccess;
+
+select * from project_members_detail;
+
+select * from project_teams;
+
+alter table project_members_detail
+add column SubProjectId bigint default 0 after ProjectId,
+add column AssignedBy bigint DEFAULT 0 after AssignedOn,
+add column ReportTo bigint DEFAULT 0 after Team,
+drop column ProjectManagerId,
+drop column AllocatedMinutes,
+rename column MemberType to DesignationId;
+
+drop table if exists sub_project;
+
+CREATE TABLE `sub_project` (
+  `SubProjectId` bigint NOT NULL,
+  `ProjectId` int NOT NULL,
+  `SubProjectName` varchar(500) NOT NULL,
+  `SubProjectDescriptionPath` varchar(500) DEFAULT NULL,
+  `AttachmentPath` json DEFAULT NULL,
+  `DepartmenId` int DEFAULT '0',
+  `CreatedBy` bigint NOT NULL,
+  `CreatedOn` datetime NOT NULL,
+  `UpdatedBy` bigint DEFAULT '0',
+  `UpdatedOn` datetime DEFAULT NULL,
+  PRIMARY KEY (`SubProjectId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+DELIMITER $$
+
+drop procedure if exists sp_employees_basicinfo_ins_upd $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_employees_basicinfo_ins_upd`(
+	_EmployeeUid bigint,
+	_FirstName varchar(50),
+	_LastName varchar(50),
+	_Mobile varchar(20),
+	_Email varchar(100),
+	_AdminId bigint,
+	_ReportingManagerId bigint,
+    _DesignationId int,
+	_UserTypeId int,
+	_LeavePlanId int,
+    _PayrollGroupId int,
+    _SalaryGroupId int,
+    _CompanyId int,
+	_WorkShiftId int,
+	_DateOfJoining datetime,
+    _SecondaryMobile varchar(20),
+    _AccessLevelId int, 
+	_Password varchar(150),
+	_OrganizationId int,
+	_CTC decimal,
+    _DOB Datetime,
+    _Location varchar(100),
+    _DepartmentId int,
+    _Gender int,
+    _ProfileStatusCode varchar(20),
+    out _ProcessingResult varchar(100)
+)
+Begin
+    Begin
+		Declare Exit handler for sqlexception
+        Begin
+			Get Diagnostics condition 1 @sqlstate = RETURNED_SQLSTATE,
+										@errorno = MYSQL_ERRNO,
+										@errortext = MESSAGE_TEXT;
+			Set @Message = concat ('ERROR ', @errorno ,  ' (', @sqlstate, '); ', @errortext);  
+            
+            RollBack;
+            set _ProcessingResult = 0;
+            Call sp_LogException (@Message, '', 'sp_employees_basicinfo_ins_upd', 1, 0, @Result);
+		end;
+        if not exists (select 1 from employees where EmployeeUid = _EmployeeUid) then
+        begin
+			set @employeeId = 0;
+            select EmployeeUid into @employeeId from employees order by EmployeeUid desc limit 1;
+            set @employeeId = @employeeId + 1;
+            
+            insert into employees values(
+				@employeeId,
+                _FirstName,
+                _LastName,
+                _Mobile,
+                _Email,
+                true, 
+                _AdminId,
+                _AdminId,
+                _DateOfJoining,
+                null,
+                _ReportingManagerId,
+                _DesignationId,
+                _UserTypeId,
+                _LeavePlanId,
+                _PayrollGroupId,
+                _SalaryGroupId,
+                _CompanyId,
+                0,
+                _WorkShiftId,
+                0
+            );
+            
+            set @employeeProId = 0;
+            select EmployeePersonalDetailId into @employeeProId from employeepersonaldetail order by EmployeePersonalDetailId desc limit 1;
+            set @employeeProId = @employeeProId + 1;
+
+            insert into employeepersonaldetail values (
+				@employeeProId,
+                @employeeId,
+                _Mobile,
+                _SecondaryMobile,
+                _Email,
+                _Gender,
+                null,
+                2, 
+                null,
+                null,
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                null,
+                null,
+                null,
+                0,
+                null,
+                false, 
+                0,
+                0,
+                0,
+                _AdminId,
+                null,
+                _DateOfJoining,
+                null,
+                _DOB
+            );
+                        
+			set @empProfDetailUid = 0;
+            select EmpProfDetailUid into @empProfDetailUid from employeeprofessiondetail order by EmpProfDetailUid desc limit 1;
+            set @empProfDetailUid = @empProfDetailUid + 1;
+
+            insert into employeeprofessiondetail values (
+				@empProfDetailUid,
+                @employeeId,
+                _FirstName,
+                _LastName,
+                _Mobile,
+                _SecondaryMobile,
+                _Email,
+                null, 
+                null, 
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                0,
+                null, 
+                null, 
+                null,
+                null,
+                null,
+                null,
+                0,
+                false,
+                null,
+                null,
+                null,
+                _Location,
+                _DepartmentId,
+                _ProfileStatusCode,
+                _AdminId,
+                null,
+                _DateOfJoining,
+                null,
+                "[]"
+            );
+            
+            set @employeeLoginId = 0;
+            select EmployeeLoginId into @employeeLoginId from employeelogin order by EmployeeLoginId desc limit 1;
+            set @employeeLoginId = @employeeLoginId + 1;
+
+            Insert into employeelogin
+				Values(
+					@employeeLoginId, 
+					@employeeId, 
+					_UserTypeId, 
+					_AccessLevelId, 
+					_Password, 
+					_Email, 
+					_Mobile,
+                    _OrganizationId,
+					_CompanyId,
+					_AdminId, 
+					null, 
+					_DateOfJoining, 
+					null
+				);
+                
+            set @salaryDetailId = 0;
+            select SalaryDetailId into @salaryDetailId from employee_salary_detail order by SalaryDetailId desc limit 1;
+            set @salaryDetailId = @salaryDetailId + 1;
+            
+            set @financialStartYear = 0;
+            select FinancialYear into @financialStartYear from company_setting;
+            select @financialStartYear;
+            insert into employee_salary_detail values (
+				@salaryDetailId,
+                @employeeId,
+                _CTC,
+                0, 
+                0,
+                "[]",
+                "[]",
+                1,
+                "[]",
+                @financialStartYear,
+                utc_timestamp()
+            );
+            set @leaveRequestId = 0;
+			select LeaveRequestId into @leaveRequestId from employee_leave_request 
+			order by LeaveRequestId desc limit 1;
+			set @leaveRequestId = @leaveRequestId + 1;
+
+			insert into employee_leave_request values(
+				@leaveRequestId,
+				@employeeId,
+				'[]',
+				year(utc_timestamp()),
+				false,
+				0,
+				0,
+				0,
+				0,
+				'[]',
+				_DateOfJoining
+			);
+			
+			set @projectMemberId = 0;
+			select ProjectMemberDetailId into @projectMemberId from project_members_detail 
+			order by ProjectMemberDetailId desc limit 1;
+			set @projectMemberId = @projectMemberId + 1;
+            insert into project_members_detail values (
+				@projectMemberId, 
+                1,
+                1,
+                @employeeId,
+                concat(_FirstName, ' ', _LastName),
+                _Email,
+                true,
+                _DesignationId,
+                utc_timestamp(),
+                1,
+                null,
+                'Default Team',
+                0
+			);
+            
+            set @employeePfDetailId = 0;
+			select EmployeePfDetailId into @employeePfDetailId from employee_pf_detail 
+			order by EmployeePfDetailId desc limit 1;
+			set @employeePfDetailId = @employeePfDetailId + 1;
+			
+			insert into employee_pf_detail values(
+				@employeePfDetailId,
+				@employeeId,
+				false,
+				false,
+				'',
+				'',
+				'',
+				false,
+				null
+			);
+            
+            set @fromDate = _DateOfJoining;
+
+			SET @adjustedDate = CASE 
+				WHEN YEAR(@fromDate) != YEAR(CURDATE()) 
+					THEN TIMESTAMP(DATE_FORMAT(CONCAT(YEAR(CURDATE()), '-01-01'), '%Y-%m-%d 18:30:00'))
+				WHEN TIME(@fromDate) != '18:30:00'
+					THEN TIMESTAMP(DATE_FORMAT(@fromDate, '%Y-%m-%d 18:30:00'))
+				ELSE
+					@fromDate
+			END;
+
+			SET @adjustedDate = DATE_SUB(@adjustedDate, INTERVAL 1 DAY);
+			set @toDate = utc_timestamp();
+
+			call sp_daily_attendance_ins_advance_by_empid(@adjustedDate , @toDate, 0, @EmpId);
+			
+            Set _ProcessingResult =  @employeeId;
+        end;
+        else
+        begin
+			SET SQL_SAFE_UPDATES = 0;
+			update employees set
+                FirstName			=			_FirstName,
+                LastName			=			_LastName,
+                Mobile				=			_Mobile,
+                Email				=			_Email,
+                UpdatedBy			=			_AdminId,
+                UpdatedOn			=			utc_timestamp(),
+                CreatedOn			=			_DateOfJoining,
+                ReportingManagerId	=			_ReportingManagerId,
+                DesignationId		=			_DesignationId,
+                UserTypeId			=			_UserTypeId,
+                LeavePlanId			=			_LeavePlanId,
+                WorkShiftId			=			_WorkShiftId
+			where EmployeeUid = _EmployeeUid;
+
+            update employeepersonaldetail set
+                Mobile					=			_Mobile,
+                SecondaryMobile			=			_SecondaryMobile,
+                Email					=			_Email,
+                UpdatedBy				=			_AdminId,
+                UpdatedOn				=			utc_timestamp(),
+                Gender					=			_Gender,
+                DOB						=			_DOB
+			where EmployeeUid = _EmployeeUid;
+                            
+            update employeeprofessiondetail set
+				FirstName				=		_FirstName,
+                LastName				=		_LastName,
+                Mobile					=		_Mobile,
+                SecondaryMobile			=		_SecondaryMobile,
+                Email					=		_Email,
+                DepartmentId			=		_DepartmentId,
+                Location				=		_Location,
+                UpdatedBy				=		_AdminId,
+                UpdatedOn				= 		utc_timestamp()
+			where EmployeeUid = _EmployeeUid;
+
+            update employeelogin set
+				UserTypeId 				=			_UserTypeId, 
+				AccessLevelId			=			_AccessLevelId, 
+				Email					=			_Email, 
+				Mobile					=			_Mobile,
+				UpdatedBy				=			_AdminId, 
+				UpdatedOn				=			utc_timestamp()
+			where EmployeeId = _EmployeeUid;
+                            
+            set @financialStartYear = 0;
+            select FinancialYear into @financialStartYear from company_setting;
+            select @financialStartYear;
+            
+            update employee_salary_detail set
+                CTC			=		_CTC
+			where EmployeeId = _EmployeeUid
+            and FinancialStartYear = @financialStartYear;
+            SET SQL_SAFE_UPDATES = 1;
+            Set _ProcessingResult =  _EmployeeUid;
+        end;
+        end if;
+	End;
+End$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_employees_ins_upd $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_employees_ins_upd`(
+	_EmployeeUid bigint,
+    _OrganizationId int,
+	_FirstName varchar(50),
+	_LastName varchar(50),
+	_Mobile varchar(20),
+	_Email varchar(100),
+    _LeavePlanId int,
+    _PayrollGroupId int,
+    _SalaryGroupId int,
+    _CompanyId int,
+    _NoticePeriodId int,
+    _SecondaryMobile varchar(20),
+    _FatherName varchar(50),
+    _MotherName varchar(50),
+    _SpouseName varchar(50),
+    _Gender int,
+    _State varchar(75),
+    _City varchar(75),
+    _Pincode int,
+    _Address varchar(100),
+    _PANNo varchar(20),
+    _AadharNo varchar(20),
+    _AccountNumber varchar(50),
+    _BankName varchar(100),
+    _BranchName varchar(100),
+    _IFSCCode varchar(20),
+    _Domain varchar(250),
+    _Specification varchar(250),
+    _ExprienceInYear float(5,2),
+    _LastCompanyName varchar(100),
+    _IsPermanent bit(1),
+	_ActualPackage float(10,2),
+    _FinalPackage float(10,2),
+    _TakeHomeByCandidate float(10,2),
+    _ReportingManagerId bigint,
+    _DesignationId int,
+    _ProfessionalDetail_Json json,
+    _Password varchar(150),
+    _AccessLevelId int,
+    _UserTypeId int,
+	_CTC decimal,
+	_GrossIncome decimal,
+	_NetSalary decimal,
+	_CompleteSalaryDetail Json,
+    _NewSalaryDetail json,
+	_TaxDetail Json,
+	_AdminId bigint,
+    _DOB datetime,
+    _RegistrationDate datetime,
+    _EmployeeDeclarationId bigint,
+    _DeclarationDetail json,
+    _WorkShiftId int,
+    _IsPending bit,
+    _IsNewRegistration bit,
+	_PFNumber varchar(30),
+    _PFJoinDate datetime,
+	_UniversalAccountNumber varchar(40),
+    _SalaryDetailId int,
+	_ESISerialNumber varchar(40),
+	_IsEmployeeEligibleForPF bit,
+	_IsExistingMemberOfPF bit,
+	_IsEmployeeEligibleForESI bit,
+    _MaritalStatus int,
+    _MarriageDate datetime,
+    _CountryOfOrigin varchar(30),
+    _Religion varchar(20),
+    _BloodGroup varchar(5),
+    _IsPhChallanged bit,
+    _Country varchar(30),
+    _EmergencyContactName varchar(40),
+    _RelationShip varchar(15),
+    _EmergencyMobileNo varchar(15),
+    _EmergencyCountry varchar(30),
+    _EmergencyState varchar(40),
+    _EmergencyCity varchar(40),
+    _EmergencyPincode int,
+    _EmergencyAddress varchar(100),
+    _PermanentCountry varchar(40),
+    _PermanentState varchar(40),
+    _PermanentCity varchar(40),
+    _PermanentPincode int,
+    _PermanentAddress varchar(100),
+    _BankAccountType varchar(10),
+    _IsInternationalEmployee bit,
+    _AgencyName varchar(100),
+    _VerificationStatus varchar(15),
+    _VerificationRemark varchar(100),
+    _Location varchar(100),
+    _DepartmentId int,
+    _LastCompanyDesignation varchar(100),
+    _WorkingFromDate datetime,
+    _WorkingToDate datetime,
+    _LastCompanyAddress varchar(100),
+    _LastCompanyNatureOfDuty varchar(100),
+    _LastDrawnSalary DECIMAL(10,2),
+    _NomineeName varchar(100),
+    _NomineeRelationship varchar(50),
+    _NomineeMobile varchar(15),
+    _NomineeEmail varchar(75),
+    _NomineeAddress varchar(250),
+    _PercentageShare decimal(5, 2),
+    _IsPrimaryNominee bit,
+    _NomineeId int,
+    out _ProcessingResult varchar(100)
+)
+Begin
+    Begin
+		Declare Exit handler for sqlexception
+        Begin
+			Get Diagnostics condition 1 @sqlstate = RETURNED_SQLSTATE,
+										@errorno = MYSQL_ERRNO,
+										@errortext = MESSAGE_TEXT;
+			Set @Message = concat ('ERROR ', @errorno ,  ' (', @sqlstate, '); ', @errortext);  
+            
+            RollBack;
+            set _ProcessingResult = 0;
+            Call sp_LogException (@Message, '', 'sp_employees_ins_upd', 1, 0, @Result);
+		end;
+        
+		set @financialYear = 0;
+		set @startMonth = 0;
+		set @endMonth = 0;
+		select 
+			FinancialYear, 
+			DeclarationStartMonth,
+			DeclarationEndMonth into @financialYear, @startMonth, @endMonth
+		from company_setting
+		where 
+			Case when _CompanyId > 0 Then  CompanyId = _CompanyId
+			Else IsPrimary = 1
+		End;
+        
+        Set @EmpId = _EmployeeUid;
+        Start Transaction;
+		Begin 
+        
+			if(_UserTypeId = 0) then
+				Set _UserTypeId = 2;
+			end if;
+        
+			If (_IsNewRegistration = true) then
+			Begin
+				Insert into employeepersonaldetail Values (
+					default,
+					@EmpId,
+					_Mobile,
+					_SecondaryMobile,
+					_Email,
+					_Gender,
+					_FatherName,
+                    _MaritalStatus,
+                    _MarriageDate,
+                    _CountryOfOrigin,
+                    _Religion,
+                    _BloodGroup,
+                    _IsPhChallanged,
+					_SpouseName,
+					_MotherName,
+                    _EmergencyContactName,
+                    _RelationShip,
+                    _EmergencyMobileNo,
+                    _EmergencyCountry,
+                    _EmergencyState,
+                    _EmergencyCity,
+                    _EmergencyPincode,
+                    _EmergencyAddress,
+					_Address,
+                    _Country,
+					_State,
+					_City,
+					_Pincode,
+                    _PermanentCountry,
+                    _PermanentState,
+                    _PermanentCity,
+                    _PermanentPincode,
+                    _PermanentAddress,
+					_IsPermanent,
+					_ActualPackage,
+					_FinalPackage,
+					_TakeHomeByCandidate,
+					_AdminId,
+					null,
+					_RegistrationDate,
+					null,
+                    _DOB
+				);
+
+				Insert into employeeprofessiondetail Values (
+					default,
+					@EmpId, 
+					_FirstName,
+					_LastName,
+					_Mobile,
+					_SecondaryMobile,
+					_Email, 
+					_PANNo,
+					_AadharNo,
+					_AccountNumber,
+                    _BankAccountType,
+					_BankName,
+					_BranchName,
+					_IFSCCode,
+					_Domain,
+					_Specification,
+					_ExprienceInYear,
+					_LastCompanyName,
+                    _LastCompanyDesignation,
+                    _WorkingFromDate,
+                    _WorkingToDate,
+                    _LastCompanyAddress,
+                    _LastCompanyNatureOfDuty,
+                    _LastDrawnSalary,
+                    _IsInternationalEmployee,
+                    _AgencyName,
+                    _VerificationStatus,
+                    _VerificationRemark,
+                    _Location,
+                    _DepartmentId,
+					"",
+					_AdminId,
+					null,
+					_RegistrationDate,
+					null,
+					_ProfessionalDetail_Json
+				);
+			
+                Insert into employeelogin
+				Values(
+					default, 
+					@EmpId, 
+					2, 
+					_AccessLevelId, 
+					_Password, 
+					_Email, 
+					_Mobile,
+                    _OrganizationId,
+					_CompanyId,
+					_AdminId, 
+					null, 
+					_RegistrationDate, 
+					null
+				);
+                set @taxRegime = 0;
+                select TaxRegimeDescId from tax_regime_desc
+				where IsDefaultRegime = 1 into @taxRegime;
+                
+                Set @decId = 0;
+				Select EmployeeDeclarationId from employee_declaration order by EmployeeDeclarationId desc limit 1 into @decId ;
+				Set @decId = @decId+1;
+
+				Insert into employee_declaration values(
+					@decId,
+					@EmpId,
+					'',
+					_DeclarationDetail,
+					'{}',
+					0,
+					0,
+					0,
+					@taxRegime,
+					@startMonth,
+					@endMonth,
+					@financialYear,
+					@financialYear + 1
+				);
+                
+                set @leaveRequestId = 0;
+                select LeaveRequestId into @leaveRequestId from employee_leave_request 
+                order by LeaveRequestId desc limit 1;
+                set @leaveRequestId = @leaveRequestId + 1;
+
+                insert into employee_leave_request values(
+					@leaveRequestId,
+                    @EmpId,
+                    '[]',
+                    year(utc_timestamp()),
+                    _IsPending,
+                    0,
+                    0,
+                    0,
+                    0,
+                    '[]',
+                    _RegistrationDate
+                );
+                set @nomineeId = 0;
+                select NomineeId into @nomineeId from nominee_detail 
+                order by NomineeId desc limit 1;
+                set @nomineeId = @nomineeId + 1;
+				
+                insert into nominee_detail values (
+					@nomineeId,
+					@EmpId,
+                    _NomineeName,
+                    _NomineeRelationship,
+                    _NomineeMobile,
+                    _NomineeEmail,
+                    null,
+                    _NomineeAddress,
+                    _PercentageShare,
+                    _IsPrimaryNominee,
+                    utc_timestamp(),
+                    utc_timestamp()
+                );
+                
+				set @projectMemberId = 0;
+				select ProjectMemberDetailId into @projectMemberId from project_members_detail 
+				order by ProjectMemberDetailId desc limit 1;
+				set @projectMemberId = @projectMemberId + 1;
+
+				insert into project_members_detail values (
+					@projectMemberId, 
+					1,
+                    1,
+					@EmpId,
+					concat(_FirstName, ' ', _LastName),
+					_Email,
+					true,
+					_DesignationId,
+					utc_timestamp(),
+                    1,
+					null,
+					'Default Team',
+					0
+				);
+                set @fromDate = _RegistrationDate;
+
+				set @adjustedDate = CASE 
+					WHEN YEAR(@fromDate) != YEAR(CURDATE()) 
+						THEN TIMESTAMP(DATE_FORMAT(CONCAT(YEAR(CURDATE()), '-01-01'), '%Y-%m-%d 18:30:00'))
+					WHEN TIME(@fromDate) != '18:30:00'
+						THEN TIMESTAMP(DATE_FORMAT(@fromDate, '%Y-%m-%d 18:30:00'))
+					ELSE
+						@fromDate
+				END;
+
+				SET @adjustedDate = DATE_SUB(@adjustedDate, INTERVAL 1 DAY);
+				set @toDate = utc_timestamp();
+
+				call sp_daily_attendance_ins_advance_by_empid(@adjustedDate , @toDate, 0, @EmpId);
+			End;
+			Else
+			Begin
+				Set _ProcessingResult = '0';
+				Set @EmpId = _EmployeeUid;
+                set sql_safe_updates = 0;
+                Update employees SET 
+						FirstName				=		_FirstName,
+						LastName				=		_LastName,
+						Mobile					=		_Mobile,
+						Email					=		_Email,
+						UpdatedBy				=		_AdminId, 
+						UpdatedOn				=		now(),
+                        ReportingManagerId		=		_ReportingManagerId,
+                        DesignationId			=		_DesignationId,
+                        UserTypeId				=		_UserTypeId,
+                        LeavePlanId				=		_LeavePlanId,
+						PayrollGroupId			=		_PayrollGroupId,
+                        SalaryGroupId			=		_SalaryGroupId,
+						CompanyId				=		_CompanyId,
+						NoticePeriodId			=		_NoticePeriodId,
+                        WorkShiftId				=		_WorkShiftId,
+                        CreatedOn				=		_RegistrationDate
+					Where 	EmployeeUid 	= _EmployeeUid;
+                
+				Update employeepersonaldetail Set
+						Mobile					=		_Mobile,
+						SecondaryMobile			=		_SecondaryMobile,
+						Email          			=       _Email,
+						Gender         			=       _Gender,
+						FatherName         		=       _FatherName,
+						MaritalStatus           =       _MaritalStatus,
+						MarriageDate            =       _MarriageDate,
+						CountryOfOrigin         =       _CountryOfOrigin,
+						Religion            	=       _Religion,
+						BloodGroup          	=       _BloodGroup,
+						IsPhChallanged          =       _IsPhChallanged,
+						SpouseName          	=       _SpouseName,
+						MotherName          	=       _MotherName,
+						EmergencyContactName    =       _EmergencyContactName,
+						RelationShip            =       _RelationShip,
+						EmergencyMobileNo       =       _EmergencyMobileNo,
+						EmergencyCountry        =       _EmergencyCountry,
+						EmergencyState          =       _EmergencyState,
+						EmergencyCity           =       _EmergencyCity,
+						EmergencyPincode        =       _EmergencyPincode,
+						EmergencyAddress        =       _EmergencyAddress,
+						Address             	=       _Address,
+						Country             	=       _Country,
+						State           		=       _State,
+						City            		=       _City,
+						Pincode             	=       _Pincode,
+						PermanentCountry        =       _PermanentCountry,
+						PermanentState          =       _PermanentState,
+						PermanentCity           =       _PermanentCity,
+						PermanentPincode        =       _PermanentPincode,
+						PermanentAddress        =       _PermanentAddress,
+						IsPermanent             =       _IsPermanent,
+						ActualPackage           =       _ActualPackage,
+						FinalPackage            =       _FinalPackage,
+						TakeHomeByCandidate     =       _TakeHomeByCandidate,
+						UpdatedBy				=	_AdminId,
+						UpdatedOn				=	now()
+				Where	EmployeeUid				=	_EmployeeUid;
+                
+				Update	employeeprofessiondetail Set
+						FirstName             	=        _FirstName,
+						LastName               	=        _LastName,
+						Mobile              	=        _Mobile,
+						SecondaryMobile         =        _SecondaryMobile,
+						Email              		=        _Email, 
+						PANNo                  	=        _PANNo,
+						AadharNo                =        _AadharNo,
+						AccountNumber           =        _AccountNumber,
+						BankAccountType         =        _BankAccountType,
+						BankName                =        _BankName,
+						BranchName              =        _BranchName,
+						IFSCCode                =        _IFSCCode,
+						Domain                 	=        _Domain,
+						Specification           =        _Specification,
+						ExprienceInYear         =        _ExprienceInYear,
+						LastCompanyName         =        _LastCompanyName,
+						LastCompanyDesignation  =        _LastCompanyDesignation,
+						WorkingFromDate         =        _WorkingFromDate,
+						WorkingToDate           =        _WorkingToDate,
+						LastCompanyAddress      =        _LastCompanyAddress,
+						LastCompanyNatureOfDuty =        _LastCompanyNatureOfDuty,
+						LastDrawnSalary         =        _LastDrawnSalary,
+						IsInternationalEmployee =        _IsInternationalEmployee,
+						AgencyName              =        _AgencyName,
+						VerificationStatus      =        _VerificationStatus,
+						VerificationRemark      =        _VerificationRemark,
+						Location                =        _Location,
+						DepartmentId            =        _DepartmentId,
+						UpdatedBy				=		_AdminId,
+						UpdatedOn				=		now(),
+						ProfessionalDetail_Json = 		_ProfessionalDetail_Json
+				 Where	EmployeeUid		=	_EmployeeUid;
+                 
+                 Update nominee_detail set
+                    NomineeName				=			_NomineeName,
+                    NomineeRelationship		=			_NomineeRelationship,
+                    NomineeMobile			=			_NomineeMobile,
+                    NomineeEmail			=			_NomineeEmail,
+                    NomineeAddress			=			_NomineeAddress,
+                    PercentageShare			=			_PercentageShare,
+                    IsPrimaryNominee		=			_IsPrimaryNominee,
+                    UpdatedOn				=			utc_timestamp()
+                    where NomineeId = _NomineeId;
+				if(_UserTypeId = 1) then
+					Set _AccessLevelId = 1;
+				end if;
+				
+				Update employeelogin
+					Set 
+                    AccessLevelId 		= 			_AccessLevelId,
+					Email 				= 			_Email,
+					UserTypeId 			=			_UserTypeId,
+					Mobile 				= 			_Mobile,
+					OrganizationId		= 			_OrganizationId,
+					CompanyId			= 			_CompanyId,
+					UpdatedBy 			= 			_AdminId,
+					UpdatedOn   		= 			now()
+				Where EmployeeId 		= 			_EmployeeUid;
+                
+				Update employee_declaration Set
+					DeclarationDetail			=			_DeclarationDetail
+				where EmployeeDeclarationId  	= 			_EmployeeDeclarationId;
+                
+				 Update employee_pf_detail Set
+                    PFNumber						=			_PFNumber,
+                    UniversalAccountNumber			=			_UniversalAccountNumber,
+					ESISerialNumber					=			_ESISerialNumber,
+                    PFJoinDate						=			_PFJoinDate,
+                    IsEmployeeEligibleForPF			=			_IsEmployeeEligibleForPF,
+                    IsExistingMemberOfPF			=			_IsExistingMemberOfPF,
+                    IsEmployeeEligibleForESI		=			_IsEmployeeEligibleForESI
+                Where EmployeeId 					= 			_EmployeeUid;
+                
+                set sql_safe_updates = 0;
+			End;
+			End if;	
+            
+            Set @groupId = 1;
+            -- Set @groupId = 0;
+            set @salarydetailId = 0;
+			select SalaryDetailId into @salarydetailId from employee_salary_detail 
+            where EmployeeId = @EmpId order by SalaryDetailId desc limit 1;
+
+			Call sp_employee_salary_detail_InsUpd(
+				@salarydetailId,
+				@EmpId, 
+                _CTC, 
+                _GrossIncome, 
+                _NetSalary, 
+                _CompleteSalaryDetail, 
+                _NewSalaryDetail, 
+                @groupId, 
+                _TaxDetail, 
+                @financialYear, 
+                _ProcessingResult
+			);
+            
+		Set _ProcessingResult =  @EmpId;
+		COMMIT;
+		End;
+	End;
+End$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_project_detail_insupd $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_project_detail_insupd`(
+	   
+	_ProjectId bigint ,
+    _ProjectName varchar(150),
+    _ProjectDescriptionFilePath varchar(150),
+    _ProjectStartedOn datetime,
+    _ProjectEndedOn datetime,
+    _IsClientProject bit,
+    _ClientId bigint,
+    _Status int,
+    _ThumbnailPath varchar(150),
+    _Priority int,
+    _HomePageUrl varchar(150),
+    _AdminId bigint,
+    _DocumentPath varchar(150),
+    _AttachmentPath json,
+	out _ProcessingResult varchar(50)
+)
+Begin
+    Begin
+		Declare Exit handler for sqlexception
+        Begin
+			Get Diagnostics condition 1 @sqlstate = RETURNED_SQLSTATE,
+										@errorno = MYSQL_ERRNO,
+										@errortext = MESSAGE_TEXT;
+			Set @Message = concat ('ERROR ', @errorno ,  ' (', @sqlstate, '); ', @errortext);
+
+            Call sp_LogException (@Message, '', 'sp_project_detail_insupd', 1, 0, @Result);
+		end;
+        
+        set @ProjectId = 0;
+        if not exists (select 1 from project where ProjectId = _ProjectId) then
+        begin
+			Set @ProjectId = 0;
+			Select ProjectId from project order by ProjectId desc limit 1 into @ProjectId ;
+			Set @ProjectId = @ProjectId + 1;
+
+			Insert into project values(
+				@ProjectId,
+				_ProjectName,
+				_ProjectDescriptionFilePath,
+				_ProjectStartedOn,
+				_ProjectEndedOn,
+				_IsClientProject,
+				_ClientId,
+                _Status,
+                _ThumbnailPath,
+                _AttachmentPath,
+                _Priority,
+				_HomePageUrl,
+                _AdminId,
+                null,
+                utc_timestamp(),
+                null
+			);            
+         
+			Set _ProcessingResult = @ProjectId;
+        end;
+        else
+        begin
+			set @ProjectId = _ProjectId;
+			update project set 
+				ProjectName						=			_ProjectName,
+				ProjectDescriptionFilePath		=			_ProjectDescriptionFilePath,
+				ProjectStartedOn				=			_ProjectStartedOn,
+				ProjectEndedOn					=			_ProjectEndedOn,
+				IsClientProject					=			_IsClientProject,
+				ClientId						=			_ClientId,
+				HomePageUrl						=			_HomePageUrl,
+				Status							=			_Status,
+                ThumbnailPath					=			_ThumbnailPath,
+                Priority						=			_Priority,
+                AttachmentPath					=			_AttachmentPath,
+                UpdatedBy						=			_AdminId,
+                UpdatedOn						=			utc_timestamp()
+			where ProjectId 					= 			_ProjectId;
+            
+            Set _ProcessingResult = @ProjectId;
+        end;
+        end if;
+	End;
+End$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_project_member_getby_projectid $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_project_member_getby_projectid`(
+    _ProjectId int
+
+	# call sp_project_member_getby_projectid(2)
+)
+Begin
+	Declare exit handler for sqlexception
+	Begin
+	
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+									
+		Set @Message = CONCAT('ERROR ', @errorno ,  ' (', @sqlstate, '): ', @errortext);
+		Call sp_LogException(@Message, '', 'sp_project_member_getby_projectid', 1, 0, @Result);
+	End;
+    
+    select p.*, o.RoleName, u.FilePath, u.FileName from project_members_detail p
+    inner join org_hierarchy o on p.DesignationId = o.RoleId
+    left join userfiledetail u on u.FileOwnerId = p.EmployeeId
+	where p.ProjectId = _ProjectId and p.IsActive = true
+    ORDER BY p.AssignedOn DESC;
+     
+end$$
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+drop procedure if exists sp_project_get_page_data $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_project_get_page_data`(
+    _ProjectId int
+
+	# call sp_project_get_page_data(2);
+)
+Begin
+	Declare exit handler for sqlexception
+	Begin
+	
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+									
+		Set @Message = CONCAT('ERROR ', @errorno ,  ' (', @sqlstate, '): ', @errortext);
+		Call sp_LogException(@Message, '', 'SP_Employees_Get', 1, 0, @Result);
+	End;
+
+	select * from project
+    where ProjectId = _ProjectId;
+    
+    select * from clients;
+    
+    select p.*, o.RoleName, u.FilePath, u.FileName from project_members_detail p
+    inner join org_hierarchy o on p.DesignationId = o.RoleId
+    left join userfiledetail u on u.FileOwnerId = p.EmployeeId
+	where p.ProjectId = _ProjectId and p.IsActive = true
+    ORDER BY p.AssignedOn DESC;
+    
+    select * from project_teams
+    where ProjectId = _ProjectId;
+end$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_project_members_get_by_employee $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_project_members_get_by_employee`(
+
+	_EmployeeId bigint
+    
+    
+/*
+
+     call sp_project_members_get_by_employee(1)
+     
+*/
+)
+Begin
+	Declare Exit handler for sqlexception
+	Begin
+		Get Diagnostics condition 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+                                    
+		drop table if exists catagory_data;
+		Set @Message = concat ('ERROR ', @errorno ,  ' (', @sqlstate, '); ', @errortext);
+		Call sp_LogException (@Message, '', 'sp_project_members_get_by_employee', 1, 0, @Result);
+	end;
+    
+    if not exists (select * from org_hierarchy where EmployeeId = _EmployeeId ) then
+		/*set @reportingManagerRoleId = 0;
+		select DesignationId into @reportingManagerRoleId from employees where EmployeeUid = _EmployeeId;*/
+       
+		select 
+			p.ProjectId,
+			p.ProjectName,
+			p.ProjectDescriptionFilePath,
+			m.Team,
+			p.ProjectStartedOn,
+			p.ProjectEndedOn,
+			m.EmployeeId,
+			m.DesignationId,
+			concat(e.FirstName, ' ', e.LastName) FullName,
+			e.Email
+		from project_members_detail m
+		inner join project p on p.ProjectId = m.ProjectId
+		inner join employees e on e.EmployeeUid = m.EmployeeId
+        where m.EmployeeId = _EmployeeId
+		-- where (m.EmployeeId = _EmployeeId And m.MemberType = @reportingManagerRoleId)
+		and e.IsActive = true;
+    else
+		Select 
+			pm.ProjectId, 
+			GROUP_CONCAT(DISTINCT pm.Team) AS Team,
+			p.ProjectName, 
+			p.ProjectDescriptionFilePath, 
+			p.ProjectStartedOn, 
+			p.ProjectEndedOn
+		FROM project_members_detail pm
+		inner join project p on p.ProjectId = pm.ProjectId
+		GROUP BY ProjectId;
+    end if;
+End$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_project_member_get_projects $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_project_member_get_projects`(
+    _EmployeeId bigint,
+    _ProjectId int
+    
+    
+	# call sp_project_member_get_projects(1, 2)
+
+)
+Begin
+	Declare exit handler for sqlexception
+	Begin
+	
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+									
+		Set @Message = CONCAT('ERROR ', @errorno ,  ' (', @sqlstate, '): ', @errortext);
+		Call sp_LogException(@Message, '', 'sp_project_member_get_projects', 1, 0, @Result);
+	End;
+    
+    set @designationId = 0;
+    set @objectiveCategoryId = 0;
+    set @appraisalDetailId = 0;
+    
+    set @currentFinancialYear = 0;
+	select FinancialYear into @currentFinancialYear from company_setting
+	where IsPrimary;
+    
+    if (_ProjectId = 1) then  
+    begin
+		set @departmentId = 0;
+        set @isDefaultManager = false;
+        
+		select DepartmentId into @departmentId from default_reporting_manager
+		where EmployeeId = _EmployeeId;
+
+		select count(*) > 0 into @isDefaultManager from default_reporting_manager
+		where EmployeeId = _EmployeeId;
+        
+        if (@isDefaultManager or _EmployeeId = 1) then
+        begin
+			select
+				pm.EmployeeId, 
+				o.RoleName, 
+				s.CTC, 
+				ep.ExprienceInYear, 
+				pm.FullName, 
+				p.ProjectId,
+				e.CompanyId, 
+				p.ProjectName, 
+				p.ProjectDescriptionFilePath, 
+				e.DesignationId, 
+                s.FinancialStartYear,
+				COALESCE(oc.ObjectiveCatagoryId, 0) AS ObjectiveCategoryId,
+				(select PerformanceStatus from employee_performance epf 
+				 where epf.EmployeeId = pm.EmployeeId limit 1) as Status
+			from project_members_detail pm
+			inner join employee_salary_detail s on s.EmployeeId = pm.EmployeeId
+			inner join employeeprofessiondetail ep on ep.EmployeeUid = s.EmployeeId
+			inner join project p on p.ProjectId = pm.ProjectId
+			inner join employees e on e.EmployeeUid = s.EmployeeId
+			inner join org_hierarchy o on o.RoleId = e.DesignationId
+			LEFT JOIN objective_catagory oc 
+				ON JSON_CONTAINS(RolesId, CAST(e.DesignationId AS CHAR)) = 1
+			where pm.ProjectId = _ProjectId 
+				and s.FinancialStartYear = @currentFinancialYear
+				and pm.IsActive = true 
+                and pm.EmployeeId != _EmployeeId
+                and (@departmentId <= 0 OR ep.DepartmentId = @departmentId);
+        end;
+        end if;
+    end;
+    else
+    begin
+		-- select e.DesignationId into @designationId from employees e where EmployeeUid = _EmployeeId;
+        select 
+			e.DesignationId into @designationId from project_members_detail e 
+		where EmployeeId = _EmployeeId and ProjectId = _ProjectId;
+        
+		select 
+			distinct ObjectiveCatagoryId into @objectiveCategoryId from appraisal_chain_level 
+		where ApprovalRoleId = @designationId;    
+        
+		select 
+			AppraisalDetailId into @appraisalDetailId from appraisal_detail 
+        where IsActiveCycle = true and JSON_CONTAINS(ObjectiveCatagoryId, CAST(@objectiveCategoryId as CHAR)) = 1;
+        
+        drop table if exists chain_level;
+		create temporary table if not exists chain_level as (
+			with recursive cte
+			as
+			(	
+				select * from org_hierarchy where ParentNode = @designationId
+				union all
+				select o.* from org_hierarchy o
+				inner join cte on cte.RoleId = o.ParentNode
+			) select * from cte
+		);
+
+		select 
+			e.EmployeeUid as EmployeeId, 
+			c.RoleName, 
+			s.CTC, 
+			ep.ExprienceInYear, 
+			Concat(ep.FirstName, ' ', ep.LastName) as FullName, 
+			p.ProjectId,
+			e.CompanyId, 
+			p.ProjectName, 
+			p.ProjectDescriptionFilePath, 
+			e.DesignationId, 
+			@objectiveCategoryId as ObjectiveCategoryId , 
+			(select PerformanceStatus from employee_performance epf 
+			 where epf.EmployeeId = pm.EmployeeId limit 1) as Status
+		from chain_level c
+		inner join project_members_detail pm on pm.DesignationId = c.RoleId
+		inner join employee_salary_detail s on s.EmployeeId = pm.EmployeeId
+		inner join employeeprofessiondetail ep on ep.EmployeeUid = s.EmployeeId
+		inner join project p on p.ProjectId = pm.ProjectId
+		inner join employees e on e.EmployeeUid = s.EmployeeId
+		-- left join employee_performance epf on epf.EmployeeId = pm.EmployeeId
+		where pm.ProjectId = _ProjectId and pm.IsActive = true
+        and s.FinancialStartYear = @currentFinancialYear;
+    end;
+    end if;
+	
+        
+    select pa.* from project_appraisal pa
+    inner join project_members_detail p on pa.ProjectId = p.ProjectId;
+    #where p.Des = _EmployeeId;
+    
+    select a.*, r.ReactedOn, r.Status as AppraisalStatus from appraisal_review_detail a
+    inner join appraisal_review_finalizer_status r on r.AppraisalReviewId = a.AppraisalReviewId
+    where r.ReviwerId = _EmployeeId and a.ProjectId = _ProjectId; 
+    
+	drop table if exists chain_level;    
+end$$
+DELIMITER ;
+
+
+DELIMITER $$
+
+drop procedure if exists sp_leave_approver_by_workflow $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_leave_approver_by_workflow`(
+		_ApprovalWorkFlowId int,
+        _ProjectId int,
+        _EmployeeId bigint
+        
+/*
+
+	call sp_leave_approver_by_workflow(1, 1, 5)
+
+*/
+)
+Begin
+	Declare Exit handler for sqlexception
+	Begin
+		Get Diagnostics condition 1 @sqlstate = RETURNED_SQLSTATE,
+									@errorno = MYSQL_ERRNO,
+									@errortext = MESSAGE_TEXT;
+                                    
+		Set @Message = concat ('ERROR ', @errorno ,  ' (', @sqlstate, '); ', @errortext);  
+		Call sp_LogException (@Message, '', 'sp_leave_approver_by_workflow', 1, 0, @Result);
+	end;
+	
+	select 
+		c.*
+	from approval_chain_detail c
+	where c.ApprovalWorkFlowId = _ApprovalWorkFlowId;
+
+    set @roleId = 0;
+    SET @recordExists = FALSE;
+    
+	select RoleId into @roleId from org_hierarchy where upper(RoleName) = 'PROJECT MANAGER';
+        
+    /*SELECT EXISTS (
+		SELECT *
+		FROM project_members_detail
+		WHERE ProjectId = _ProjectId AND MemberType = @roleId
+	) INTO @recordExists; */
+    
+    SELECT EXISTS (
+		SELECT *
+		FROM project_members_detail
+		WHERE ProjectId = _ProjectId AND DesignationId = @roleId
+	) INTO @recordExists; 
+            
+	if exists(select 1 from project_members_detail 
+    where ProjectId = _ProjectId and EmployeeId = _EmployeeId and @recordExists = true) then
+    begin 
+		select 
+			distinct
+			e.EmployeeId, 
+			e.Email, 
+			e.FullName Name, 
+			a.IsRequired 
+		from project_members_detail e
+		inner join employees emp on emp.EmployeeUid = e.EmployeeId
+		inner join approval_chain_detail a on a.AssignieId = emp.DesignationId
+		where e.ProjectId = _ProjectId
+		and emp.IsActive = true;
+		# and a.ApprovalWorkFlowId = _ApprovalWorkFlowId;
+    end;
+    else 
+    begin
+		select 
+			emp.EmployeeUid as EmployeeId, 
+			emp.Email, 
+			concat(emp.FirstName, ' ', emp.LastName) Name, 
+			e.IsRequired 
+		from approval_chain_detail e
+		inner join employees emp on emp.DesignationId = e.AssignieId
+		where e.ApprovalWorkFlowId = 1 
+		and emp.EmployeeUid = (select ReportingManagerId from employees where EmployeeUid = _EmployeeId)
+		and emp.IsActive = true;
+    end;
+    end if;
+End$$
+DELIMITER ;
