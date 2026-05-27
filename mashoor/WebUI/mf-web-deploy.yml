@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mf-web-pod
+  namespace: mf
+  labels:
+    app: mf-web-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mf-web-pod
+  template:
+    metadata:
+      labels:
+        app: mf-web-pod
+    spec:
+      containers:
+        - name: mf-web-pod
+          image: bottomhalflimited/mf-svc-web:latest
+          ports:
+            - containerPort: 80

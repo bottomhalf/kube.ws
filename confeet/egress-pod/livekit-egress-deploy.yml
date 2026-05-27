@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: livekit-egress
+  namespace: cf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: livekit-egress
+  template:
+    metadata:
+      labels:
+        app: livekit-egress
+    spec:
+      containers:
+        - name: egress
+          image: livekit/egress:latest
+          imagePullPolicy: Always
+
+          command: ["/tini", "--", "egress"]
+          args: ["--config", "/etc/egress/config.yaml"]
+          
+          env:
+            - name: EGRESS_LOG_LEVEL
+              value: info                      
+
+          volumeMounts:
+            - name: config
+              mountPath: /etc/egress
+            - name: recordings
+              mountPath: /output
+
+          resources:
+            requests:
+              cpu: "2"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+
+      volumes:
+        - name: config
+          configMap:
+            name: livekit-egress-config
+
+        - name: recordings
+          persistentVolumeClaim:
+            claimName: livekit-recordings-pvc

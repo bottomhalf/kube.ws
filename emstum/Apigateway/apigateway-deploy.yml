@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: apigateway-pod
-          image: bottomhalflimited/ems.gtw.apigateway:emstum-20250827132900
+          image: bottomhalflimited/ems.gtw.apigateway:emstum-20260513065743
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

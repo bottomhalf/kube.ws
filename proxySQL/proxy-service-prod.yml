@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxysql-service-prod
+  namespace: pms
+spec:
+  type: ClusterIP
+
+  selector:
+    app: proxysql
+
+  ports:
+    - name: mysql
+      port: 6033
+      targetPort: 6033
+
+    - name: dev-mysql
+      port: 6032
+      targetPort: 6032

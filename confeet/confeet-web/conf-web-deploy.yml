@@ -1,0 +1,22 @@
+# deployment for hirinb bell ui
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conf-web-pod
+  namespace: cf
+spec:
+  selector:
+    matchLabels:
+      app: conf-web-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: conf-web-pod
+    spec:
+      containers:
+      - name: conf-web-pod
+        image: bottomhalflimited/conf.app.web:dev-2509
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

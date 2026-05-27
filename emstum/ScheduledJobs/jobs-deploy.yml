@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: jobsjob
-          image: bottomhalflimited/ems-jobs:latest
+          image: bottomhalflimited/ems-jobs:emstum
           imagePullPolicy: Always
           ports:
             - containerPort: 8085

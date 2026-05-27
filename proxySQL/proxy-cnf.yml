@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxysql-config
+  namespace: pms
+data:
+  proxysql.cnf: |
+    datadir="/var/lib/proxysql"
+
+    admin_variables=
+    {
+        admin_credentials="admin:admin"
+        mysql_ifaces="0.0.0.0:6032"
+        refresh_interval=2000
+        web_enabled=false
+    }
+
+    mysql_variables=
+    {
+        threads=4
+        max_connections=2048
+
+        interfaces="0.0.0.0:6033"
+
+        default_query_timeout=36000000
+
+        connect_timeout_server=3000
+        connect_timeout_server_max=10000
+
+        connection_max_age_ms=300000
+
+        monitor_username="root"
+        monitor_password="live@Bottomhalf_001"
+
+        mysql-multiplexing=true
+
+        ping_interval_server_msec=10000
+        ping_timeout_server=200
+
+        sessions_sort=true
+    }
+
+    mysql_servers =
+    (
+        {
+            address = "mysql-service.default.svc.cluster.local"
+            port = 3306
+            hostgroup = 0
+            max_connections = 150
+        }
+    )
+
+    mysql_users =
+    (
+        {
+            username = "root"
+            password = "live@Bottomhalf_001"
+            default_hostgroup = 0
+            active = 1
+            frontend = 1
+            backend = 1
+            max_connections = 500
+            transaction_persistent = 1
+        }
+    )

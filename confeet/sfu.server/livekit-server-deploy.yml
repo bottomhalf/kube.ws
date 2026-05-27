@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: livekit-server
+  namespace: cf
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: livekit-server }
+  template:
+    metadata:
+      labels: { app: livekit-server }
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      terminationGracePeriodSeconds: 18000  # allow long call drain
+      containers:
+        - name: livekit
+          image: livekit/livekit-server:latest
+          args: ["--config", "/etc/livekit/config.yaml"]
+          env:
+            - name: LIVEKIT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: livekit-keys
+                  key: LIVEKIT_API_KEY
+            - name: LIVEKIT_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: livekit-keys
+                  key: LIVEKIT_API_SECRET
+          ports:
+            - name: http
+              containerPort: 7880
+              protocol: TCP
+            - name: ws
+              containerPort: 7881
+              protocol: TCP
+            - name: rtp
+              containerPort: 7882
+              protocol: UDP
+          volumeMounts:
+            - name: livekit-config
+              mountPath: /etc/livekit
+      volumes:
+        - name: livekit-config
+          configMap:
+            name: livekit-config

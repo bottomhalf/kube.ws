@@ -1,0 +1,22 @@
+# deployment for hirinb bell ui
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conf-manager-pod
+  namespace: cf
+spec:
+  selector:
+    matchLabels:
+      app: conf-manager-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: conf-manager-pod
+    spec:
+      containers:
+      - name: conf-manager-pod
+        image: bottomhalflimited/conf.svc.manager:dev-2509
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 7801

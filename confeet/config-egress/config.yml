@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: livekit-egress-config
+  namespace: cf
+data:
+  config.yaml: |
+    log_level: info
+
+    api_key: lk_egress
+    api_secret: 2a0ca4b219fc36bf775d1a61fe1114be
+
+    ws_url: ws://livekit-service.cf.svc.cluster.local:7880
+    api_url: http://livekit-service.cf.svc.cluster.local:7880
+
+    redis:
+      address: redis-conf-service.cf.svc.cluster.local:6379
+
+    local:
+      path: /output
+
+    encoding:
+      type: cpu
+      preset: H264_720P_30
+      audio_bitrate: 128

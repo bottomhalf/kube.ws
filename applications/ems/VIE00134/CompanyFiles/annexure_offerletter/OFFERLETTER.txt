@@ -1,0 +1,75 @@
+<h1 class="western" align="center">
+<b style=""><u style=""><font size="5">OFFER LETTER</font></u></b></h1>
+<p style="margin-bottom: 0.35cm">Date: [[Date]]</p>
+<p style="margin-bottom: 0.35cm">Candidate Name: [[CandidateName]]</p>
+<p style="margin-bottom: 0.35cm">Address: [[CandidateAddress]]</p>
+<p style="margin-bottom: 0.35cm">Email: [[CandidateEmailId]]</p>
+<p style="margin-bottom: 0.35cm"><br>
+<br>
+
+</p>
+<h2 class="western" style="text-align: right;">Subject: Offer of Employment</h2>
+<p style="margin-bottom: 0.35cm">Dear [[CandidateName]],<br>
+<br>
+We
+are pleased to offer you the position of [Designation] with [Company
+Name], effective from [[JoiningDate]].</p>
+<h2 class="western">1. Position &amp; Reporting</h2>
+<p style="margin-bottom: 0.35cm">You will be designated as
+[[Designation]] and will report to [Reporting Manager/Department].
+Your place of posting will be [[Location][. However, you may be
+transferred to any location as per business requirements.</p>
+<h2 class="western">2. Probation Period</h2>
+<p style="margin-bottom: 0.35cm">You will be on probation for a
+period of [[ProbationPeriod]] days from the date of joining. Your
+performance will be reviewed during this period, and upon
+satisfactory completion, you will be confirmed in writing.</p>
+<h2 class="western">3. Confidentiality</h2>
+<p style="margin-bottom: 0.35cm">You shall maintain strict
+confidentiality regarding company information, trade secrets, client
+data, and internal processes. This obligation shall survive
+termination of employment.</p>
+<h2 class="western">4. Working Hours</h2>
+<p style="margin-bottom: 0.35cm">Your working hours will be from
+<strong>[</strong><strong>[</strong><strong>Start Time</strong><strong>]</strong><strong>]
+to [</strong><strong>[</strong><strong>End Time</strong><strong>]</strong><strong>]</strong>,
+Monday to Friday (or as per company policy). 
+</p>
+<h2 class="western">5. Leave &amp; Benefits</h2>
+<p style="margin-bottom: 0.35cm">You will be entitled to leave and
+other benefits as per company policy, which may be amended from time
+to time. 
+</p>
+<h2 class="western">6. Notice Period</h2>
+<p style="margin-bottom: 0.35cm">Either party may terminate this
+employment by giving [[NoticePeriod]] written notice or salary in
+lieu of notice, as per company policy.</p>
+<h2 class="western">7. Background Verification</h2>
+<p style="margin-bottom: 0.35cm">This offer is subject to
+verification of educational qualifications, experience, identity
+proof, and background checks. If any information is found incorrect,
+the company reserves the right to withdraw this offer or terminate
+employment.</p>
+<h2 class="western">8. Transfer Clause</h2>
+<p style="margin-bottom: 0.35cm">The company reserves the right to
+transfer you to any of its departments, locations, sister concerns,
+or client sites based on business requirements.</p>
+<h2 class="western">9. Acceptance of Offer</h2>
+<p style="margin-bottom: 0.35cm">Please sign and return a copy of
+this letter as a token of your acceptance on or before
+[[AcceptanceLastDate]].</p>
+<p style="margin-bottom: 0.35cm">We look forward to welcoming you to
+the organization and wish you a successful career with us. 
+</p>
+<p style="margin-bottom: 0.35cm"><br>
+Sincerely,</p>
+<p style="margin-bottom: 0.35cm">[[AuthorizedSignatoryName]]</p>
+<p style="margin-bottom: 0.35cm">[[Designation]]</p>
+<p style="margin-bottom: 0.35cm">[[CompanyName]]</p>
+<hr><p style="margin-bottom: 0.35cm">
+<br>
+Candidate Acceptance:</p>
+<p style="margin-bottom: 0.35cm">I, [[CandidateName]], accept the
+above offer and agree to the terms and conditions stated herein.</p>
+<p style="margin-bottom: 0.35cm">Signature: _______________________</p>
+<p style="margin-bottom: 0.35cm">Date: ____________________________</p>

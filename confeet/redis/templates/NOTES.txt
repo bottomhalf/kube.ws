@@ -1,0 +1,41 @@
+1. Redis has been deployed successfully!
+
+   Release name : {{ .Release.Name }}
+   Namespace    : {{ .Release.Namespace }}
+   Chart version: {{ .Chart.Version }}
+   App version  : {{ .Chart.AppVersion }}
+
+2. Service Details:
+   Type : {{ .Values.service.type }}
+   Port : {{ .Values.service.port }}
+
+   To access Redis from within the cluster:
+
+   redis-cli -h {{ include "redis.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local \
+             -p {{ .Values.service.port }} \
+             -a <REDIS_PASSWORD>
+
+3. Run a quick connectivity test:
+
+   helm test {{ .Release.Name }} --namespace {{ .Release.Namespace }}
+
+4. Check pod status:
+
+   microk8s kubectl get pods -n {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "redis.name" . }},app.kubernetes.io/instance={{ .Release.Name }}"
+
+5. Check HPA status:
+{{- if .Values.autoscaling.enabled }}
+   microk8s kubectl get hpa -n {{ .Release.Namespace }} {{ include "redis.fullname" . }}
+{{- else }}
+   HPA is disabled. Set autoscaling.enabled=true to enable it.
+{{- end }}
+
+⚠️  IMPORTANT: Change the default Redis password before deploying to production!
+    helm upgrade {{ .Release.Name }} ./redis \
+      --namespace {{ .Release.Namespace }} \
+      --set secret.REDIS_PASSWORD="<your-strong-password>"
+
+
+Note: 
+Installation cmd:    microk8s helm3 install redis-release ./redis -n cf --create-namespace
+Uninstallation cmd:  microk8s helm3 uninstall redis-release -n your_namespace

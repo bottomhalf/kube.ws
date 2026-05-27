@@ -15,6 +15,7 @@ spec:
       labels:
         app: authenticator-hb-pod
     spec:
+      serviceAccountName: hb-gateway-sa
       containers:
         - name: authenticator-hb-pod
           image: bottomhalflimited/hb-svc-auth:latest

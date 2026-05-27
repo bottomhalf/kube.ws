@@ -8,6 +8,6 @@ spec:
     app: jobs-pod
   ports:
     - protocol: TCP
-      port: 8213
+      port: 8216
       targetPort: 8085
   type: NodePort

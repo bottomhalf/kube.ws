@@ -11,10 +11,9 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-    nginx.ingress.kubernetes.io/websocket-services: "confeet-websocket-service.cf.svc.cluster.local"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
-    nginx.ingress.kubernetes.io/enable-websocket: "false"    
+    nginx.ingress.kubernetes.io/enable-websocket: "false"
 spec:
   ingressClassName: public
   tls:
@@ -29,14 +28,22 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: confeet-websocket-service
+            name: conf-web-service
             port:
-              number: 8402
+              number: 7800
 
-      - path: /cf/meet/
+      - path: /api
         pathType: Prefix
         backend:
           service:
-            name: confeet-websocket-service
+            name: conf-manager-service
             port:
-              number: 8402              
+              number: 7801
+
+      # - path: /stt
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: stt-service
+      #       port:
+      #         number: 7802

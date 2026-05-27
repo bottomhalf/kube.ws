@@ -1,0 +1,55 @@
+# ingress direct access use this for subdomain also
+# port number range for hiringbell services start from 9001
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mf-ingress
+  namespace: mf
+  annotations:
+    cert-manager.io/cluster-issuer: "lets-encrypt"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "30m"
+    nginx.ingress.kubernetes.io/client-max-body-size: "30m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+
+    # Disable websocket tracking completely by ingress
+    # nginx.ingress.kubernetes.io/websocket-services: "messaging-chat-service.hb.svc.cluster.local"
+    # nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    # nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    # nginx.ingress.kubernetes.io/enable-websocket: "false"
+spec:
+  ingressClassName: public
+  tls:
+    - hosts:
+        -  www.mashoorfoundation.com
+      secretName: mashoorfoundation-tls
+  rules:
+    - host: www.mashoorfoundation.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 8551
+
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-service
+                port:
+                  number: 8552
+
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: main-service
+                port:
+                  number: 8553

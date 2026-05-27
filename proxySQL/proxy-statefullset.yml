@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: proxysql
+  namespace: pms
+spec:
+  serviceName: proxysql-headless
+
+  replicas: 3
+
+  podManagementPolicy: Parallel
+
+  updateStrategy:
+    type: RollingUpdate
+
+  selector:
+    matchLabels:
+      app: proxysql
+
+  template:
+    metadata:
+      labels:
+        app: proxysql
+
+    spec:
+      terminationGracePeriodSeconds: 30
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - proxysql
+
+      containers:
+        - name: proxysql
+
+          image: proxysql/proxysql:3.0.3
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 6033
+              name: mysql
+
+            - containerPort: 6032
+              name: dev-mysql
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+
+          livenessProbe:
+            tcpSocket:
+              port: 6033
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+
+          readinessProbe:
+            tcpSocket:
+              port: 6033
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+
+          volumeMounts:
+            - name: proxysql-config
+              mountPath: /etc/proxysql.cnf
+              subPath: proxysql.cnf
+
+            - name: proxysql-data
+              mountPath: /var/lib/proxysql
+
+      volumes:
+        - name: proxysql-config
+          configMap:
+            name: proxysql-config
+
+  volumeClaimTemplates:
+    - metadata:
+        name: proxysql-data
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 5Gi

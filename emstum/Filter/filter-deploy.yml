@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: filter
-          image: bottomhalflimited/ems-svc-filter:emstum-20250629125635
+          image: bottomhalflimited/ems-svc-filter:emstum-20251211045209
           imagePullPolicy: Always
           ports:
             - containerPort: 8091

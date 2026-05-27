@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxysql-headless
+  namespace: pms
+spec:
+  clusterIP: None
+
+  selector:
+    app: proxysql
+
+  ports:
+    - name: mysql
+      port: 6033
+      targetPort: 6033
+
+    - name: dev-mysql
+      port: 6032
+      targetPort: 6032

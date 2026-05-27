@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: manager-emstum-pod
-          image: bottomhalflimited/bt.web.emsmanager:latest
+          image: bottomhalflimited/bt.web.servicemanager:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80

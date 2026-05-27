@@ -10,5 +10,5 @@ spec:
     - ReadWriteOnce
   storageClassName: local-storage
   hostPath:
-    path: /root/kube.ws/HiringBell/Volumn_and_claims/resources
+    path: /root/kube.ws/hiringbell/volumns/resources
     type: DirectoryOrCreate

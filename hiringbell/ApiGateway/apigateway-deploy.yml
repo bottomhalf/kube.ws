@@ -15,6 +15,7 @@ spec:
       labels:
         app: apigateway-hb-pod
     spec:
+      serviceAccountName: hb-gateway-sa
       containers:
         - name: apigateway-hb-pod
           image: bottomhalflimited/hb-gtw-api:latest

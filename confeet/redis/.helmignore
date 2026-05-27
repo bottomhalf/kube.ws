@@ -1,0 +1,21 @@
+# Patterns to ignore when building packages.
+# This supports shell glob matching, relative path matching, and negation (prefixed with !).
+
+.DS_Store
+.git/
+.gitignore
+.gitattributes
+*.orig
+.helmignore
+README.md
+*.swp
+*.bak
+*.tmp
+*.tgz
+
+# Editors
+.vscode/
+.idea/
+
+# CI/CD
+.github/

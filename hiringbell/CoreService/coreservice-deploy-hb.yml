@@ -15,6 +15,7 @@ spec:
       labels:
         app: coreservice-hb-pod
     spec:
+      serviceAccountName: hb-gateway-sa
       containers:
         - name: coreservice-hb-pod
           image: bottomhalflimited/hb-svc-core:latest

@@ -1,0 +1,85 @@
+# Default values for redis helm chart
+
+namespace: cf
+
+replicaCount: 1
+
+image:
+  repository: redis
+  pullPolicy: IfNotPresent
+  tag: "7.2.4-alpine"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 7822
+  targetPort: 6379
+
+# ConfigMap environment variables
+config:
+  REDIS_MAXMEMORY: "256mb"
+  REDIS_MAXMEMORY_POLICY: "allkeys-lru"
+  REDIS_TIMEOUT: "300"
+  REDIS_TCP_KEEPALIVE: "60"
+  REDIS_LOGLEVEL: "notice"
+
+# Secrets (base64-encoded in the Secret template; plain text here, Helm will encode)
+secret:
+  REDIS_PASSWORD: "confeet-redis-pass$0_1for_&*prod"
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsNonRoot: true
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+persistence:
+  enabled: false
